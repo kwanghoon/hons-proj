@@ -12,21 +12,26 @@
 \date{\today}
 
 \abstract{
-This is an example of {\tt infthesis} style.
-The file {\tt skeleton.tex} generates this document and can be 
-used to get a ``skeleton'' for your thesis.
-The abstract should summarise your report and fit in the space on the 
-first page.
-%
-You may, of course, use any other software to write your report,
-as long as you follow the same style. That means: producing a title
-page as given here, and including a table of contents and bibliography.
-}
 
+  In the past couple of years the field of Reinforcement Learning has been
+  shaken up by what is now labelled as Deep Reinforcement Learning, that is the
+  process of using deep architectures such as convolutional neural networks to
+  approximate some of the functions required in a reinforcement learning
+  process. The shift of part of the community to this particular methodology
+  appears to have created the need for test-beds that are unusually more
+  data-hungry, data-driven and related to vision or natural language processing.
+  Moreover, the inherent hierarchy of those approximation techniques calls for
+  advances in Hierarchical Reinforcement Learning. To satisfy these needs we
+  have developed a platform for agent learning based on a classic
+  Real-Time-Strategy (RTS) game, Starcraft Brood War, and we have built an
+  interface to be able to perform experiments based on a popular Deep Learning
+  framework, Torch. To test the framework we have then ported the recent
+  ``deep'' variant of Q-learning, DQN and made it train on a few simple maps.
+}
 \maketitle
 
 \section*{Acknowledgements}
-Acknowledgements go here. 
+Acknowledgements go here.
 
 \tableofcontents
 
@@ -53,11 +58,11 @@ Commands for generating the title page appear in the skeleton file and
 are self explanatory.
 The file also includes commands to choose your report type (project
 report, thesis or dissertation) and degree.
-These will be placed in the appropriate place in the title page. 
+These will be placed in the appropriate place in the title page.
 
 The default behaviour of the documentclass is to produce documents typeset in
-12 point.  Regardless of the formatting system you use, 
-it is recommended that you submit your thesis printed (or copied) 
+12 point.  Regardless of the formatting system you use,
+it is recommended that you submit your thesis printed (or copied)
 double sided.
 
 The report should be printed single-spaced.
@@ -71,7 +76,7 @@ Divide your chapters into sub-parts as appropriate.
 
 \section{Citations}
 
-Note that citations 
+Note that citations
 (like \cite{P1} or \cite{P2})
 can be generated using {\tt BibTeX} or by using the
 {\tt thebibliography} environment. This makes sure that the
