@@ -173,11 +173,11 @@ by the game and extract it as a standard integer array, so that it can then sent
 to the server and used as the input state for our algorithms together with the
 game state. After several optimisation this operation doesn't take a significant
 toll on the overall performances, but a text-based configuration system has also
-been included to active features such as this one. The game information is
-instead collected using BWAPI and then encoded in a Google Protocol
-Buffer\cite{protobuf}, a standard serialisation object that encodes arbitrary
-data structures into byte arrays and that is fast and that allows to check for
-data presence and validity.
+been included to activate or deactivate features such as this one. The game
+information is instead collected using BWAPI and then encoded in a Google
+Protocol Buffer\cite{protobuf}, a standard serialisation object that encodes
+arbitrary data structures into byte arrays and that is fast and that allows to
+check for data presence and validity.
 
 As we previously mentioned, BWAPI allows to do DLL injection and place the AI
 binary code directly into the StarCraft process. This is the preferred method
@@ -195,7 +195,7 @@ After the game state and the image messages get passed through socket connection
 to the linux server, those need to be passed to the lua process so that it can
 own them and use them appropriately. To do so we wrapped the entire C++ server
 interface in Lua objects by creating a dynamic library and loading it into Lua
-using the LuaJIT.
+using the LuaJIT interpreter.
 
 LuaJIT is a Just-In-Time compiler for Lua, which allows to connect high
 performance C and C++ code with the more high level Lua scripting language,
@@ -205,7 +205,9 @@ for this process to happen, but we essentially decided to directly load the
 compiled binary with the C++ object definitions and declarations into the Lua
 ecosystem via an LuaJIT internal declaration and linking system. The objects are
 then wrapped with the Torch class interface[CITE HERE], which then can be used
-completely.
+completely without any worries in terms of memory management and threading (as
+LuaJIT gives you a garbage collector for free as long as you set up the objects
+in the proper way).
 
 Translating the image was a slightly more difficult process, because the format
 Windows uses to store bitmaps is largely unsupported one in the Linux ecosystem.
@@ -249,16 +251,16 @@ simply not able to solve most of our maps. In particular, we individuated two
 major issues to first address for basic deep Q-learning to successfully complete
 even some basic part of the game.
 
-\subsection{Starcraft is inherently hierarchical}
+\subsection{RTSs are inherently hierarchical}
 
 As with all RTSs, the game forces players to focus on building solid overall
 long-term game strategies and local short-term focused tactics completely in
 parallel, often with the clear objective of making the player choose certain
-tradeoffs that will benefit long versus short term goals. As a strategy game, we
+trade-offs that will benefit long versus short term goals. As a strategy game, we
 can therefore see that policies are structured and hierarchical, because certain
 strategy might spawn certain tactics with parameters entirely dependent on the
 ``super-policy''. Additionally Starcraft is also hierarchical in its state and
-value, because of the existence of classes available only after certain inter
+value because of the existence of classes available only after certain inter
 objectives have been reached, or even just because of the dependency on the
 skill tree to develop both militarily and economically.
 
@@ -267,13 +269,13 @@ skill tree to develop both militarily and economically.
 As previously mentioned, with most of the roms used within ALE the visual data
 contains the full state of the game. That is, assuming we have a good
 understanding of the score function, the image given by ALE essentially gives us
-all the information we need to get well the most useful action at any given time
+all the information we need to model the most useful action at any given time
 with reasonable results. In Starcraft the visual feedback purely represents the
 state of the game at a specific point in the map - point usually chosen by the
 player through keyboard or mouse actions - and unless the user puts time and
-effort in dynamically exploring the map to update his world knowledge an idea of
-the general state of the game can only be looked up by observing the extremely
-compressed minimap (Figure \ref{fig:one_star}).
+effort in dynamically exploring the map to update his world knowledge, they
+can't get an idea of the general state of the game a part from looking at the
+extremely compressed minimap (Figure \ref{fig:one_star}).
 
 \begin{figure}[h]
     \centering
@@ -310,8 +312,8 @@ Starcraft’s visual feedback by itself (i.e. even without encoded features) is
 therefore essentially non-Markovian in how it represents the state of the game.
 Starcraft players are required to move the window to gain information, and the
 image changes drastically depends on where the window is (Figure
-\ref{fig:double_star}), so unless there is some form of memory to collect the game
-state, we cannot only use the visual data as input. My conjecture is that
+\ref{fig:double_star}), so unless there is some form of memory to collect the
+game state, we cannot only use the visual data as input. Our conjecture is that
 creating an encoded representation of the entire state of game is by itself an
 unsolved mixed deep learning (representation) and RL problem, as the variance in
 the input is simply too large and it's entirely based on the learnt policy for
@@ -321,21 +323,22 @@ both unit actions and screen/environment actions.
 
 The issue itself is of policy learning. That is, theoretically we can imagine a
 policy that maps all the possible states of the game, with the problem that it
-would be clearly become very big even considering two units and the smallest map
-size (64 by 64 pixels). When we imagine games with hundreds of units, larger
+would be clearly become too big even just considering two units and the smallest
+map size (64 by 64 pixels). When we imagine games with hundreds of units, larger
 maps and we add some unit data such as possible actions, life points, energy
 points and further information the state quickly explodes and the problem
-becomes intractable. To try tackling this from a reinforcement learning
-perspective we need to take advantage of the intrinsic hierarchy of actions from
-a decision making point of view. To do so, we can use techniques originating
-from a the field called Hierarchical Reinforcement Learning.
+becomes hopelessly intractable. To try tackling this from a reinforcement
+learning perspective we need to take advantage of the intrinsic hierarchy of
+actions from a decision making point of view. We can then use techniques
+originating from a the field called Hierarchical Reinforcement Learning.
 
 The idea of splitting the learning process to tackle sub-problems and then
 generalise over them has been a source of research for now a few decades.
 Several techniques and methodologies have been invented over the years, some of
-them trying to decompose the MDPs and act on the decomposed value functions
-(MAXQ), some of them using gating structures and learning linker functions, some
-of them acting directly in the policy and MDP spaces (Options).
+them trying to decompose the MDPs\cite{marthi2005concurrent} and act on the
+decomposed value functions (MAXQ)\cite{dietterich2000hierarchical}, some of them
+using generic gating mechanisms\cite{watkins1989learning}, some of them acting
+directly in the policy and MDP space\cite{stolle2002learning}.
 
 In our case, the simplest way to tackle StarCraft's policy problem is to
 iteratively learn about useful sequences of actions, but to do this we need to
