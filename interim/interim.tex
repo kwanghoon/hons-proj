@@ -271,7 +271,13 @@ compressed minimap (Figure \ref{fig:one_star}).
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{star_one}
-    \caption{The project's architecture}
+    \caption{Standard StarCraft game screen that the player needs to interact
+      with. The minimap is on the bottom-left; black areas are not yet
+      discovered (and therefore not observable), grey areas have been discovered
+      but are not fully observable anymore (topology of the map is known, unit
+      or resources status is not) and light brown areas are observed areas with
+      full observability in terms of game state (symbolical). The white
+      rectangle signals the visible area at the current window position.}
     \label{fig:one_star}
 \end{figure}
 
@@ -287,7 +293,9 @@ making exploration a one-shot process i.e. once the map is explored it’ll be
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{double_star}
-    \caption{The project's architecture}
+    \caption{The variance in visual input between the two windows is as seen
+      very high, because not only the relative position of the unit changes, but
+      the entirety of the space changes significantly.}
     \label{fig:double_star}
 \end{figure}
 
