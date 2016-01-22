@@ -46,13 +46,9 @@
 
 \maketitle
 
-% \section*{Acknowledgements}
-% Acknowledgements go here.
-
 \tableofcontents
 
 %\pagenumbering{arabic}
-
 
 \chapter{Introduction}
 
@@ -68,33 +64,39 @@ this process is not very scalable for environments that approach a level of
 complexity similar to the real-world, as the agent must sufficiently solve the
 problem of both creating a useful representation of sensory inputs and
 generalise over it for long term learning. To tackle the representation problem
-the community lately started emphasising the usage of a deeper approach to
-machine learning, deep learning, where efficient, scalable and high-capacity
-models can learn some form of distributed representation of their
-input\cite{lecun2015deep}.
+the community lately started emphasising the usage of an architecturally deeper
+approach to machine learning, deep learning (DL), where efficient, scalable and
+high-capacity models can learn some form of distributed representation of their
+input\cite{lecun2015deep}. This subfield exploded a few years ago when some
+researchers started using deep architectures such as convolutional neural
+networks to approximate and represent key parts of the Rl processes, with
+popular models such as modified Q-learning algorithms\cite{mnih2013playing},
+trajectory/policy optimisation\cite{levine2015end} and policy representation
+methods\cite{kakade2002approximately}.
 
 \section{Games as virtual learning environments}
 
 Through the decades several benchmark suites have been developed to allow the
 reinforcement learning and AI community to build and test their algorithm in a
-scientific fashion. These were usually in the form of either pure decision
-problems such as the multi-armed bandit problem[CITE HERE] or interactive and
-environmentally rich scenarios such as gridworld. Part of the community also
-went on focusing on using robotic competitions to advance the state of the art
-of reinforcement learning algorithms[PETER STONE CITE HERE], while some other
-preferred remaining within the boundaries of software and use simulation
-environments to carry on their research[CITE CITE CITE]. Finally with the years
-the use of computer games as AI benchmark also has also become common, with new
-comprehensive gaming suites such as the Atari Learning Environment (ALE)[CITE
-ALE HERE] and open source ports of popular games like Warcraft[STRATAGUS HERE].
+systematic fashion. These were usually in the form of either pure decision
+problems such as the multi-armed bandit problem\cite{berry1985bandit} or
+interactive and environmentally rich scenarios such as gridworld. Part of the
+community has also focused on using robotic competitions to advance the state of
+the art of reinforcement learning algorithms\cite{stone2001scaling}, while
+others have preferred remaining within the boundaries of software and use
+simulation environments to carry on their research\cite{gosavi2014simulation}.
+Not unexpectedly the use of computer games as AI benchmark also has also become
+common, with new comprehensive gaming suites such as the Arcade Learning
+Environment (ALE)\cite{bellemare2012arcade} and open source ports of popular
+RTS games such as Stratagus\cite{ponsen2005stratagus}.
 
-\section{Deep Reinforcement Learning}
-
-The usage of deep learning models such as Convolutional Neural Networks to
-approximate and represent part of the functions required for a reinforcement
-learning process to work and learn was coined Deep Reinforcement Learning in
-2013 and has since become a popular solution to some of the complex
-representation problems in many RL scenarios\cite{mnih2013playing}.
+\section{The Arcade Learning Environment}
+The Arcade Learning Environment is a simulation tool that allows to control and
+analyse several Atari games. The tool allows to extract both symbolical game
+state (when available) and the screen output. Because of the simplicity of most
+of the available games, the image stream usually contains all the information
+necessary to win the games. Most of the available ROMs can be beaten using a
+well-tuned reactive policy learnt from the input image\cite{mnih2015human}.
 
 \section{StarCraft Brood War}
 Real time strategy (RTS) games have historically been a source of complex
@@ -114,25 +116,26 @@ games involves and requires solving include (but are not limited to):
 \end{itemize}
 
 Those are all terribly challenging problems that have spawned several techniques
-and even entire fields of research. The creation of a machine learning system
-that can at least partially solve all those problems and therefore have the
-chance to be able to play with a human opponent is far from being close, even
-with the relatively game-changing performances of Deep Reinforcement Learning.
+and even entire fields of research\cite{buro2003real}. The creation of a machine
+learning system that can at least partially solve all those problems and
+therefore have the chance to be able to play with a human opponent is far from
+being close, even with the relatively game-changing performances of Deep
+Reinforcement Learning.
 
 In the past years several RTS research platforms have emerged, the most
 prominent ones being Stratagus, OpenRTS and Wargus, however the lack of polish,
 missing game mechanics and features that are normally available in commercial
-RTS games, and lack of community does not make them ideal to do AI research,
+RTS games and lack of community does not make them ideal to do AI research,
 especially now that some important parts of it rely also on good amounts of
 available data to be fruitful. A more feasible solution was instead to take one
 of the popular commercial games and adapt it as to make it an AI testing suite;
-in our case, we chose StarCraft.
+in our case, we chose the most popular RTS game every developed: StarCraft.
 
 Starcraft is a relatively old commercial game that represents the quintessence
 of Real Time Strategy (RTS) games. Its code is unfortunately completely closed
-and Blizzard have never really opened the game to modifications. However a few
-users have developed an interface to read the memory of the game and modify it,
-called Brood War Application Programming Interface (BWAPI).
+and Blizzard have never really opened the game to modifications, but luckily a
+few users have developed a system to read and modify the memory of the game,
+called Brood War Application Programming Interface (BWAPI)\cite{bwapi2011brood}.
 
 \section{BWAPI}
 
@@ -142,7 +145,9 @@ using DLL injection to dynamically run the AI code within the address space of
 the game. This interface has become somewhat popular within the community and
 around it have spawned a couple of tournaments and tens of developers willing to
 help with its maintenance. For our purpose we had to add some functionality to
-the API to allow it to be usable as a (deep) reinforcement learning environment.
+the API to allow it to be usable as a (deep) reinforcement learning environment,
+such as a socket interface to be able to communicate with a Linux process and a
+automatic memory saving system for collecting the visual output.
 
 \chapter{The Project}
 
@@ -159,36 +164,37 @@ Our entire architecture looks like the one in Figure \ref{fig:arch}: a C++
 client initialises BWAPI and communicates through shared memory with a running
 instance of StarCraft Brood War; the client is then linked to a server also
 written in C++ running on a Linux machine through a blocking socket connection,
-which initialises luajit, Torch, the CUDA environment and then runs the AI.
+which initialises LuaJIT\cite{pall2008luajit}, Torch\cite{collobert2011torch},
+the CUDA environment\cite{nvidia2008programming}, and then finally runs the AI.
 
-The client not only manages the game and parses its information, but it also
-takes advantage of the standard Windows API to access the graphical output
-generated by the game and extract it as a standard integer array, so that it can
-then sent to the server and used as the input state for our algorithms together
-with the game state. After several optimisation this operation doesn't take a
-significant toll on the overall performances, but a text-based configuration
-system has also been included to active features such as this one. The game
-information is instead collected using BWAPI and then encoded in a Google
-ProtoBuffer, a standard serialisation object that encodes arbitrary data
-structures into byte arrays and that is fast and that allows to check for data
-presence and validity.
+The client not only manages the game and parses its information, but also takes
+advantage of the standard Windows API to access the graphical output generated
+by the game and extract it as a standard integer array, so that it can then sent
+to the server and used as the input state for our algorithms together with the
+game state. After several optimisation this operation doesn't take a significant
+toll on the overall performances, but a text-based configuration system has also
+been included to active features such as this one. The game information is
+instead collected using BWAPI and then encoded in a Google Protocol
+Buffer\cite{protobuf}, a standard serialisation object that encodes arbitrary
+data structures into byte arrays and that is fast and that allows to check for
+data presence and validity.
 
 As we previously mentioned, BWAPI allows to do DLL injection and place the AI
 binary code directly into the StarCraft process. This is the preferred method
-used in both at SSCAIT and AIIDE, but it doesn't give a good amount of control
-on the game itself, and makes it therefore difficult to prepare good
-experimental settings. Since those two methods are exclusive, we decided to use
-the other client-server based interface. The idea was to simulate most of the
-ALE interface to allow for easy interoperability with DeepMind's DQN codebase
-and other codebases based on that particular one, and the closest model was the
-one that was most decoupled from the game.
+used in both at SSCAIT and AIIDE (two StarCraft bots tournaments), but it
+doesn't give a good amount of control on the game itself, and makes it therefore
+difficult to prepare good experiment environments. Since those two methods are
+exclusive, we decided to use the other client-server based interface. The idea
+was to simulate most of the ALE interface to allow for easy interoperability
+with DeepMind's DQN codebase and other codebases based on that particular one,
+and the closest model was the one that was most decoupled from the game.
 
 \section{C++ server to Torch: luajit interface}
 
 After the game state and the image messages get passed through socket connection
 to the linux server, those need to be passed to the lua process so that it can
 own them and use them appropriately. To do so we wrapped the entire C++ server
-interface in lua objects by creating a dynamic library and loading it into lua
+interface in Lua objects by creating a dynamic library and loading it into Lua
 using the LuaJIT.
 
 LuaJIT is a Just-In-Time compiler for Lua, which allows to connect high
@@ -196,7 +202,7 @@ performance C and C++ code with the more high level Lua scripting language,
 therefore simplifying the process of writing high-level interfaces while
 maintaining the speed of faster but lower-level languages. There are a few ways
 for this process to happen, but we essentially decided to directly load the
-compiled binary with the C++ object definitions and declarations into the lua
+compiled binary with the C++ object definitions and declarations into the Lua
 ecosystem via an LuaJIT internal declaration and linking system. The objects are
 then wrapped with the Torch class interface[CITE HERE], which then can be used
 completely.
@@ -204,43 +210,44 @@ completely.
 Translating the image was a slightly more difficult process, because the format
 Windows uses to store bitmaps is largely unsupported one in the Linux ecosystem.
 The conversion to the format used by Torch was optimised by noticing that the
-colour channels are completely separate and that some pointer math is enough to
-essentially allow us to use a threaded parallel loop and speed up the copying.
-We tried also acting on the stride information used by the Tensor classes in
-Torch, but it made other operations very slow (all the ones that actually
-modified the tensor itself), because the assumption of continuous data array
-could not hold anymore.
+colour channels are completely separate and that some pointer math was enough to
+essentially allow us to use a threaded parallel loop and speed up the copying
+process. We tried also acting on the stride information used by the Tensor
+classes in Torch, but it made other operations very slow (all the ones that
+actually modified the tensor itself), because the assumption of continuous data
+array could not hold anymore for the rest of the libraries.
 
 \section{Filtering the game state}
 
 Because of its nature as an RTS, it's not easy to extract the totality of the
 information that StarCraft produces within a game. In particular, it's not clear
 in what ways a programmer should explore the state and which objects and
-relations should be explicitly mapped. For instance, we can spatial information
-about units and buildings, but collecting information about all the technologies
-that each building can produce would mean iterating through all the possible
-game objects, checking their existence and creating a huge information tree,
-most of which is not necessarily useful to a reinforcement learning system. To
-solve this issue we decide to limit our experiments to a few unit classes and to
-give access to our models only to their positions and health, without caring
-about upgrades or other skills. The set of unit classes includes only Terran and
-Zerg units, and are workers (of any kind), soldiers (marines), healers (medics)
-and buildings. Because we are not sending information about building usage, we
-only need to provide their position and life points.
+relations should be explicitly mapped out. For instance, it's possible to
+retrieve spatial information about units and buildings, but collecting
+information about all the technologies that each building can produce would mean
+iterating through all the possible game objects, checking their existence and
+creating a huge information tree, most of which is not necessarily useful to a
+reinforcement learning system. To eliminate this problem we decide to limit our
+experiments to a few unit classes and to retrieve only their positions and life
+points, without caring about upgrades or other skills. The final set of unit
+classes included only Terran and Zerg units, and were workers (of any kind),
+soldiers (marines), healers (medics) and buildings. Because we were not sending
+information about building usage, we also only needed to provide their position
+and life points.
 
 \section{Interfacing with DeepMind's DQN}
 
 Once the interface was complete and most of the bugs were ironed out, we
 proceeded to learn and adapt the code from DeepMind's Nature paper to work with
 our project interface. Ultimately we made our interface look exactly like ALE's,
-so that very few edits were needed to be made to their codebase. However, a lot
-of code related to the different ATARI games was stripped and the configuration
-layer was in general simplified.
+so that very few edits were needed to be made directly to their codebase.
+However, a lot of code related to the different ATARI games was stripped and the
+configuration layer was in general simplified.
 
 Unsurprisingly, we discovered with a few preliminary tests that standard DQN was
-simply not able to solve most of our maps. In particular, two big issues need to
-be addressed for standard deep Q-learning to successfully complete even some
-basic part of the game.
+simply not able to solve most of our maps. In particular, we individuated two
+major issues to first address for basic deep Q-learning to successfully complete
+even some basic part of the game.
 
 \subsection{Starcraft is inherently hierarchical}
 
@@ -382,8 +389,6 @@ The next steps to complete the project are included in the following table.
 \label{tab:timeline}
 \end{table}
 
-% use the following and \cite{} as above if you use BibTeX
-% otherwise generate bibtem entries
 \bibliographystyle{plain}
 \bibliography{thesis}
 
