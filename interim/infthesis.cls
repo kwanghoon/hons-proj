@@ -536,7 +536,7 @@ Computer Science}}
 
 \newenvironment{mainabs}
    {\begin{frontenv}{\abstractname}{\LARGE}}
-   {\end{frontenv}\newpage}
+   {\end{frontenv}}
 \newenvironment{frontabs}
     {\begin{frontenv}{\abstractname}{\large}
      \begin{quotation}\rm}
