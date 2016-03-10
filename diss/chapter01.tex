@@ -5,3 +5,45 @@
 % 4. Structure of the Dissertation
 
 \chapter{Introduction}
+
+Artificial Intelligence is an extremely interesting but difficult problem to
+address, as research has to at least account for the complexity and breath of
+behaviour that has been shown in animals and humans. Autonomy can be sometimes
+programmatically engineered, but most of intelligent behaviour requires some
+amount of learning that can only be acquired through direct interaction with the
+environment, as a big part of being ``intelligent'' has to do with the ability
+to generalise knowledge and behave reasonably in unseen scenarios.
+
+A technique developed specifically to address this type of learning process is
+Reinforcement learning. Reinforcement learning provides a general framework
+to learn behaviour in a goal-oriented fashion and without requiring expert
+knowledge or labelled data. It is framed to be functional even in situations
+where reward is delayed and where environments are not deterministic. Because of
+its foundations on dynamic programming, it also allows the use of rich and
+powerful mathematical tools for its analysis.
+
+\section{Approaching the problem} % TODO rename
+
+The point of this work was primarily about exploring what it would take to
+concretely transform and use StarCraft as a platform to study reinforcement
+learning and general artificial intelligence. We adopted a scoping approach to
+deal with the engineering problem, with the goal to reach a state where we could
+successfully run state of the art learning algorithms on StarCraft. This
+therefore required the construction of a robust and generic interface to the
+game, the creation of an interface to one of the popular tensor libraries and
+finally porting and testing a few basic reinforcement learning and deep
+reinforcement learning algorithms.
+
+The idea was to prove the feasibility of using StarCraft as a learning platform,
+to release the first version of a useful interface to allow the community to
+bootstrap work on real time strategy games, and to create a baseline for later
+work in the area.
+
+\section{Report Structure}
+
+Chapter 2 presents reinforcement learning and discusses some of the research
+done by games. It outlines properties of real time strategy games and it seeks
+to explain the benefits of using StarCraft as a research platform. Chapter 3
+presents the engineering approach taken and the developed architecture, covering
+the entire pipeline from the game to the agent interface, also providing some
+example agent learning algorithms.
