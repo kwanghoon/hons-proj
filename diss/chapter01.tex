@@ -14,6 +14,8 @@ amount of learning that can only be acquired through direct interaction with the
 environment, as a big part of being ``intelligent'' has to do with the ability
 to generalise knowledge and behave reasonably in unseen scenarios.
 
+\section{Reinforcement Learning}
+
 A technique developed specifically to address this type of learning process is
 Reinforcement learning. Reinforcement learning provides a general framework
 to learn behaviour in a goal-oriented fashion and without requiring expert
@@ -21,6 +23,31 @@ knowledge or labelled data. It is framed to be functional even in situations
 where reward is delayed and where environments are not deterministic. Because of
 its foundations on dynamic programming, it also allows the use of rich and
 powerful mathematical tools for its analysis.
+
+Reinforcement Learning algorithms have since the beginning found usage when
+applied fields such as robot control, natural language processing and economics,
+but most of the theoretical work has required relatively simple and scalable
+testbeds to compare algorithms in a systematic and rigorous manner. Most of
+those domains were simple adaptations of classical AI problems such as grid
+worlds and bandit problems, but as research started getting past those problems
+the community started to come up with more structured and complex domains.
+Example of such new domains are board games like go and backgammon, simulated
+football and a variety of video games. All of those share characteristics that
+make naive reinforcement learning complex to engineer and train: they can
+possess large action or environment state sets, they challenge algorithms by
+providing only a degree of partial of observability or they can be properly
+solved only by obtaining very strong long-term strategies (that realms such as
+planning try to tackle).
+
+% Cite board games
+
+% Go, backgammon
+
+% Atari
+
+% Torcs
+
+% cite from http://umichrl.pbworks.com/w/page/7597597/Successes%20of%20Reinforcement%20Learning
 
 \section{Approaching the problem} % TODO rename
 
