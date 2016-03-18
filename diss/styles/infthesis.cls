@@ -1,11 +1,10 @@
 %%
 %%    File : infthesis.cls    (LaTeX2e class file)
-%%  Author : Version 3.6 by Charles Sutton <csutton@inf.ed.ac.uk>  
-%%           Version 3.5 by Vasilis Vasaitis <v.vasaitis@sms.ed.ac.uk>
+%%  Author : Version 3.5 by Vasilis Vasaitis <v.vasaitis@sms.ed.ac.uk>
 %%           Version 3.4.1 updated by Tiejun Ma (t.j.ma@ed.ac.uk)
 %%           Version 3.0 by Mary Ellen Foster <mef@cogsci.ed.ac.uk>
 %%           Original version by Martin Reddy (mxr@dcs.ed.ac.uk) 
-%% Version : 3.6
+%% Version : 3.5
 %% Updates : 1.0 [9/11/95] - initial release.
 %%           1.1 [24/4/96] - fixed bibliography bug caused by new report.cls 
 %%           1.2 [13/5/96] - \dedication & \thesiscaption[]
@@ -29,7 +28,6 @@
 %%           3.4.1[09/03/2006] -add [a4paper] parameter for geometry package
 %%           3.5 [02/02/2011] - fix double-sided margins with modern
 %%                              versions of the geometry package
-%%           3.6 [15/03/2012] - addition to support the MInf degree
 
 
 %% This file contains a class definition, infthesis, for the LaTeX2e
@@ -56,7 +54,7 @@
 \RequirePackage{ifthen,%  
     graphics,%
     xspace,
-    eushield}
+    styles/logos/eushield}
 
 
 %%%% The following packages are also used but are included further on rather
@@ -169,7 +167,6 @@ Computer Science}}
     \@infschool \\ \@university}%
     \setboolean{strict}{false}}
 \DeclareOption{msc}{\@taughtdegree{Master of Science}{\@mscdegree}}
-\DeclareOption{minf}{\@taughtdegree{Master of Informatics}{~}}
 \DeclareOption{bsc}{\@taughtdegree{\@project}{\@course}}
 
 %% Chapter header alignment, font of headings
@@ -536,7 +533,7 @@ Computer Science}}
 
 \newenvironment{mainabs}
    {\begin{frontenv}{\abstractname}{\LARGE}}
-   {\end{frontenv}}
+   {\end{frontenv}\newpage}
 \newenvironment{frontabs}
     {\begin{frontenv}{\abstractname}{\large}
      \begin{quotation}\rm}
