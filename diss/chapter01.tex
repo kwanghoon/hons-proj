@@ -23,7 +23,7 @@ knowledge or labelled data. It is framed to be functional even in situations
 where reward is delayed and where environments are not deterministic. Because of
 its foundations on dynamic programming, it also allows the use of rich and
 powerful mathematical tools for its analysis. Unfortunately those algorithms
-learn more or less good policies only when the environment is sufficiently
+learn more or less good behaviour sets only when the environment is sufficiently
 tractable, and they start breaking down as the state space increases in size. To
 study reinforcement learning we therefore need testbeds that allow to
 parametrise the size of this state and that remain interesting enough to provide
@@ -44,27 +44,39 @@ testbeds used by researchers working in machine learning and more generally
 artificial intelligence.
 
 Reinforcement Learning algorithms have since the beginning found usage when
-applied fields such as robot control, natural language processing and economics,
-but most of the theoretical work has required relatively simple and scalable
-testbeds to compare algorithms in a systematic and rigorous manner. Most of
-those domains were simple adaptations of classical AI problems such as grid
-worlds and bandit problems, but as research started getting past those problems
-the community started to come up with more structured and complex domains.
-Example of such new domains are board games like go and backgammon, simulated
-football and a variety of video games. All of those share characteristics that
-make naive reinforcement learning complex to engineer and train: they can
-possess large action or environment state sets, they challenge algorithms by
-providing only a degree of partial of observability or they can be properly
-solved only by obtaining very strong long-term strategies (that realms such as
-planning try to tackle).
+applied to fields such as robot control, natural language processing and
+economics, but most of the theoretical work has required relatively simple and
+scalable testbeds to compare algorithms in a systematic and rigorous manner.
+Most of those domains were simple adaptations of classical AI problems such as
+grid worlds and bandit problems, but as research started getting past those
+problems the community had to come up with more structured and complex domains.
+Those testbeds have historically mostly consisted of board games like go and
+backgammon, but in the past couple of decades the community has also introduced
+domains such as simulated football and a variety of video games. All of those share
+characteristics that make naive reinforcement learning complex to engineer and
+train: they can possess large action or environment state sets, they challenge
+algorithms by providing only a degree of partial of observability or they can be
+properly solved only by obtaining very strong long-term strategies (that realms
+such as planning try to tackle).
 
-% Cite board games
+% ALE picture here.
 
-% Go, backgammon
+A popular and recent learning platform has been for instance the Atari Learning
+Environment (ALE), which researchers have mostly used to study reinforcement
+learning algorithms that can learn a variety of policies for different games.
+Unfortunately the majority of the games contained in this particular
+platform don't require anything way more complex than reactive policies, which
+means that studying more advanced policy learning on those games has become
+quite a forced process.
 
-% Atari
-
-% Torcs
+A category of video games more suitable for providing complex scenarios for
+studying RL is the category of Real-Time Strategy (RTS) games. This typology of
+games generally requires some amount of long-term planning combined with
+interactive and generalisable short-term or reactive planning, and it's
+particularly challenging to reinforcement learning algorithms because of the
+intrinsic partial observability, the unusually big action space, and its nature
+of competitive game. We focus on one of the most popular and still widely played
+RTS games, Starcraft.
 
 % cite from http://umichrl.pbworks.com/w/page/7597597/Successes%20of%20Reinforcement%20Learning
 
@@ -92,4 +104,7 @@ done by games. It outlines properties of real time strategy games and it seeks
 to explain the benefits of using StarCraft as a research platform. Chapter 3
 presents the engineering approach taken and the developed architecture, covering
 the entire pipeline from the game to the agent interface, also providing some
-example agent learning algorithms.
+example agent learning algorithms. Chapter 4 presents results obtained from
+testing the platform using a couple of model-free reinforcement learning
+algorithms. Finally Chapter 5 discusses some improvements for the design and
+future work.
