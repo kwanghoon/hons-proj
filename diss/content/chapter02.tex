@@ -9,7 +9,71 @@
 
 \section{Reinforcement Learning}
 
+Reinforcement Learning is centered around the idea that a good set of problems
+in control learning and artificial intelligence can be viewed as sequential
+decision making processes. In such formalisation we consider \emph{agent} all
+the parts of the problem that contribute to the execution of the decision-making
+process, and \emph{environment} everything outside of the agent. given a
+discrete-time setting the full system is commonly framed in the following way:
+at every episode $t$ the agent receives some observation $s_t \in S$ and from the
+environment and executes an action $a_t \in A$ derived from a policy $\pi : S
+\rightarrow A$, and receives a reward $r_{t+1} \in \mathbb{R}$. The objective of
+reinforcement learning algorithms usually consist in maximising the reward
+received in a certain time frame using the experience gained by acting within
+the environment. 
+
 \subsection{Markov Decision Processes}
+
+The decision process becomes quickly intractable if you have to process the
+entirety of the experience at every step, therefore we need a system that allows
+us to approximate history without losing information.
+
+We define \emph{Markov Decision Process} (MDP) a task where the current
+observation and reward depend only on the past observation-action pair.
+
+\begin{equation}
+Pr(s_{t+1}, r_{t+1} | s_1, a_1, ... , s_t, a_t) = Pr(s_{t+1}, r_{t+1} |
+s_t, a_t)
+\end{equation}
+
+The observed state $s_t$ is called the \emph{Markov State}, and is defined as
+the state that summarises all gained experience up until time $t$. If during a
+particular task all the agent observes are Markov states, then the problem is
+defined \emph{fully observable}, otherwise it's \emph{partially observable}. Our
+work focuses on fully observable problems, but we will take partial
+observability into account towards the final chapters to discuss some of the
+properties of this particular subset of tasks. Additionally we assume our task
+to be \emph{episodic}, which means that the a finite horizon with a number of
+reachable terminal states, and that the environment and the agent have finite 
+action and state spaces $A$ and $S$.
+
+In general MDPs define a transition probability $P_a(s, s')$ describing the
+probability that the process might move into a new state $s'$ from state $s$
+taking action $a$, and a reward function $R_a(s, s')$ that provides the expected
+reward for such transition.
+
+\begin{equation}
+P_a(s, s') = Pr(s' | s, a)
+\end{equation}
+\begin{equation}
+R_a(s, s') = \mathbb{E}[r|s, s', a]
+\end{equation}
+
+At every step the action taken by the agent is selected by a policy $\pi(s, a) =
+P_r(a | s)$, and we know that any given MDP there exist an optimal policy
+$\pi^*(s, a)$ that maximises the expected total reward $R_t = \sum^T{r_t}$:
+
+\begin{equation}
+  \pi^*(s, a) = \operatornamewithlimits{argmax}_{\pi} \mathbb{E}_{\pi}[R_t | s_t]
+\end{equation}
+
+Reinforcement learning methods can finally also be divided in two groups with
+respective to whether or not they model $P_a(s, s')$ and $R_a(s, s')$.
+\emph{Model-free} reinforcement learning learn from experience without any
+knowledge of environment, \emph{model-based} reinforcement learning either
+assume some or full knowledge of the environment or estimate it during the
+learning process.
+
 
 \subsection{Model-free Reinforcement Learning}
 
@@ -36,16 +100,17 @@ features and the representation itself.
 The first part of this chapter has presented the Reinforcement Learning
 framework and the Markov Decision Process, a formalisation that allows to study,
 analyse and compare reinforcement learning algorithms. In particular we have
-reviewed work in model-free reinforcement learning and research focused on
-adding some form of hierarchical structure to reinforcement learning as a way to
-address the problem of learning complex policies. Additionally we have looked at
-recent work that addresses the problem of learning policies from visual
-information using deep learning, a powerful set of algorithms for building
-generative models that can automatically discover features and that work
-surprisingly well for domains when lots of data is available.
+reviewed work in model-free reinforcement learning, and we have looked at
+research focused on adding some form of hierarchical structure to reinforcement
+learning as a way to address the problem of learning growing policy spaces.
+Additionally we have looked at recent work that addresses the problem of
+learning policies from visual information using deep learning, a powerful set of
+algorithms for building generative models that can automatically discover
+features and that work surprisingly well for domains when lots of data is
+available.
 
 The second part of the chapter has focused on reviewing some of the available
-videogame platforms that have successfully been used in artificial intelligence
+video-game platforms that have successfully been used in artificial intelligence
 research, looking in particular at Real-Time Strategy games. Finally we have
-provided a description of StarCraft and the rationale behind the idea of
-transforming it into a fully-fledged agent learning platform.
+provided a description of StarCraft, its properties and the rationale behind the
+idea of transforming it into a fully-fledged agent learning platform.
