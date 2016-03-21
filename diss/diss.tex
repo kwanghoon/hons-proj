@@ -1,19 +1,14 @@
 \documentclass[bsc, twoside, parskip, logo, notimes, normalheadings]{styles/infthesis}
 
-\usepackage{graphicx} 
-
+\usepackage{graphicx}
 \graphicspath{ {images/} }
 
 \usepackage[utf8]{inputenc}
+\usepackage{array, booktabs}
+\usepackage[round]{natbib}
+
 \usepackage{amsmath}
 \usepackage{amsfonts}
-
-% \usepackage[TS1,T1]{fontenc}
-% \usepackage{fourier}
-
-\usepackage{array, booktabs}
-
-\usepackage{natbib}
 
 \title{StarCraft Brood War as an Agent Learning Platform}
 \author{Nantas Nardelli}
@@ -25,22 +20,20 @@
 \input{content/abstract}
 
 \begin{document}
+
 \begin{preliminary}
-
-\maketitle
-
-\input{content/acknowledgements}
-
-\standarddeclaration
-
-\dedication{}
-
-\tableofcontents
+  
+  \maketitle
+  
+  \input{content/acknowledgements}
+  
+  \standarddeclaration
+  
+  \dedication{}
+  
+  \tableofcontents
 
 \end{preliminary}
-
-%\pagenumbering{arabic}
-
 
 \input{content/chapter01} % introduction
 \input{content/chapter02} % background
