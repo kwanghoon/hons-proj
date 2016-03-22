@@ -7,50 +7,60 @@
 
 \chapter{Background}
 
+The following sections give an overview of the Reinforcement Learning framework
+and some of its variations, provide some information about games-based
+artificial intelligence environments, and finally review recent work done on
+Real-Time Strategy games.
+
 \section{Reinforcement Learning}
 
-Reinforcement Learning is centered around the idea that a good set of problems
-in control learning and artificial intelligence can be viewed as sequential
+Reinforcement Learning is centered around the idea that a good chunk of problems
+in control theory and artificial intelligence can be viewed as sequential
 decision making processes. In such formalisation we consider \emph{agent} all
 the parts of the problem that contribute to the execution of the decision-making
-process, and \emph{environment} everything outside of the agent. given a
-discrete-time setting the full system is commonly framed in the following way:
-at every episode $t$ the agent receives some observation $s_t \in S$ and from the
-environment and executes an action $a_t \in A$ derived from a policy $\pi : S
-\rightarrow A$, and receives a reward $r_{t+1} \in \mathbb{R}$. The objective of
-reinforcement learning algorithms usually consist in maximising the reward
+process, and \emph{environment} everything outside of the agent.  Given a
+discrete-time setting, the full system is commonly framed in the following way:
+at every episode $t$ the agent receives some observation $s_t \in S$ from
+the environment, executes an action $a_t \in A$ derived from a policy $\pi :
+S \rightarrow A$, and receives a reward $r_{t+1} \in \mathbb{R}$ together with
+a new observation. The objective
+of reinforcement learning algorithms usually consist in maximising the reward
 received in a certain time frame using the experience gained by acting within
-the environment. 
+the environment.
 
 \subsection{Markov Decision Processes}
 
 The decision process becomes quickly intractable if you have to process the
-entirety of the experience at every step, therefore we need a system that allows
-us to approximate history without losing information.
+entirety of the experience at every step, therefore we need a way to allow us to
+approximate history without losing important information.
 
 We define \emph{Markov Decision Process} (MDP) a task where the current
-observation and reward depend only on the past observation-action pair.
+observation and reward depend entirely on the past observation-action pair
+(Equation \ref{eq:rl_mdp}).
 
 \begin{equation}
 Pr(s_{t+1}, r_{t+1} | s_1, a_1, ... , s_t, a_t) = Pr(s_{t+1}, r_{t+1} |
 s_t, a_t)
+\label{eq:rl_mdp}
 \end{equation}
 
 The observed state $s_t$ is called the \emph{Markov State}, and is defined as
 the state that summarises all gained experience up until time $t$. If during a
-particular task all the agent observes are Markov states, then the problem is
-defined \emph{fully observable}, otherwise it's \emph{partially observable}. Our
-work focuses on fully observable problems, but we will take partial
+particular task all that the agent observes are Markov states, then the problem
+is defined \emph{fully observable}, otherwise it's \emph{partially observable}.
+Our work focuses on fully observable problems, but we will take partial
 observability into account towards the final chapters to discuss some of the
-properties of this particular subset of tasks. Additionally we assume our task
-to be \emph{episodic}, which means that the a finite horizon with a number of
-reachable terminal states, and that the environment and the agent have finite 
-action and state spaces $A$ and $S$.
+properties of this particular subset of tasks. Additionally we assume our tasks
+to be \emph{episodic}, which means that they possess a finite horizon with a
+number of reachable terminal states, and that the environment and the agent have
+finite action and state spaces $A$ and $S$.
 
 In general MDPs define a transition probability $P_a(s, s')$ describing the
 probability that the process might move into a new state $s'$ from state $s$
 taking action $a$, and a reward function $R_a(s, s')$ that provides the expected
 reward for such transition.
+
+% reviewed till here.
 
 \begin{equation}
 P_a(s, s') = Pr(s' | s, a)
@@ -67,7 +77,7 @@ $\pi^*(s, a)$ that maximises the expected total reward $R_t = \sum^T{r_t}$:
   \pi^*(s, a) = \operatornamewithlimits{argmax}_{\pi} \mathbb{E}_{\pi}[R_t | s_t]
 \end{equation}
 
-Reinforcement learning methods can finally also be divided in two groups with
+Reinforcement learning methods can also be divided in two groups with
 respective to whether or not they model $P_a(s, s')$ and $R_a(s, s')$.
 \emph{Model-free} reinforcement learning learn from experience without any
 knowledge of environment, \emph{model-based} reinforcement learning either
@@ -78,18 +88,21 @@ Some of the most successful and popular reinforcement learning algorithms are
 based on the idea of choosing actions depending on the \emph{value} of current
 and future states. We define $V_{\pi}(s)$ and $Q_{\pi}(s, a)$ to be respectively
 the expected return from state $s$ under a policy $\pi$ and the expected return
-after choosing an action $a$ in $s$ before following $\pi$.
+after choosing an action $a$ in $s$ before following $\pi$ (Equations
+\ref{eq:value} and \ref{eq:q_act}).
 
 \begin{equation}
 V_{\pi}(s) = \mathbb{E}[R_t | s]
+\label{eq:value}
 \end{equation}
 \begin{equation}
 Q_{\pi}(s, a) = \mathbb{E}[R_t | s, a]
+\label{eq:q_act}
 \end{equation}
 
 Depending on the algorithm, either or both functions are updated iteratively as
-new observations arrive. They can then be taken as factors into the planning
-process by simple greedy policies or more complex agent systems.
+new observations arrive. Those functions can then be taken as factors into the
+planning process by simple greedy policies or more complex agent systems.
 
 % insert some examples of model-free and model-based models
 
@@ -119,12 +132,18 @@ reasoning or some other type of control (even RL itself).
 
 % maybe explain SMDP here
 
-Another similar approach to the problem is value decomposition methods such as
-MAXQ, a hierarchy of sub-tasks in learnt and concurrently solved by decomposing
+Another approach to the problem is value decomposition methods such as MAXQ,
+where a hierarchy of sub-tasks in learnt and concurrently solved by decomposing
 the graph until primitives are reached. The higher layers are governed by the
 policy, but the available actions reduce as the algorithm walks the graph.
 
 % Put MAXQ graph
+
+Unfortunately all of those methods help the decision-making process by modelling
+different levels of abstractions within the reinforcement learning framework,
+but they don't solve the problem of engineering the state representation, making
+the application of reinforcement learning algorithms to robotic and other
+applied fields.
 
 \subsection{Deep Reinforcement Learning}
 
@@ -160,22 +179,54 @@ converge to a good internal representations even with modern and specialised
 optimisation algorithms, however reinforcement learning generally suffers from
 the same issue, which makes the two techniques relatively compatible.
 
-We'll see in Chapter 3 that by employing some learning tricks it is in fact possible
-to use deep networks to approximate a lot of the classic reinforcement learning
-functions (such as for instance the value function $V_{\pi}(s)$).
-% DQN goes into methodology
+We'll see in Chapter 3 that by employing some learning tricks it is in fact
+possible to use deep networks to approximate a lot of the classic reinforcement
+learning functions (such as for instance the value function $V_{\pi}(s)$).
 
-\section{Research using games}
+\section{Videogames-based Learning Environments}
+
+Playing video-games often involve a wide variety of transferable skills ranging
+from reactive planning to reasoning under extreme uncertainty. It's probably
+reasonable to state that one of the industries that has most benefited from
+artificial intelligence research is in fact the computer gaming industry. AI is
+regularly used to create challenging and enjoyable scenarios for human players,
+and has essentially motivated a lot of the community to create algorithms and
+models that can be used in a variety of contexts and that can scale efficiently
+with different domains.
+
+We will cover in particular recent platforms that allow to test a variety of
+reinforcement learning algorithms and Real-Time Strategy games.
+
+% Torcs ?
 
 \subsection{ALE}
+
+The Arcade Learning Environment (ALE) is a software framework developed to
+easily allow the building of computer agents that can play a number of Atari
+2600 games. Atari 2600 is one of the oldest video game consoles: sold from 1977
+for over a decade, it was one of the first instances of computers purposely
+built for gaming. Over 500 games were available at the time and the number
+increases every years thanks to indie developers. ALE aims to allow developers
+to use one interface to control all games, so that energy and focus can be spent
+on building context-independent AI algorithms. For the moment over 60 games are
+available in the platform, and most of them have been featured in reinforcement
+learning and AI work. The interface is built on an open-source emulator for
+Atari 2600 ROM images, and is released under the GNU GPL license.
+
+In Chapter 3 we discuss work that managed to reach human and superhuman
+performances on most of the games available in this system. In their platform
+presentation paper, the authors of ALE state that once the games available in
+ALE are defeated, the community should move up the ladder and challenge newer
+and more complex games.
 
 \subsection{RTS AI Research}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{placeholder}
-    \caption{0 A.D., an open source cross-platform Real-Time Strategy game.}
-    \label{fig:ALE}
+    \includegraphics[width=0.9\textwidth]{ch2/0ad}
+    \caption{Typical in-game view of 0 A.D., an open source cross-platform
+      Real-Time Strategy game.}
+    \label{fig:0ad}
 \end{figure}
 
 
@@ -196,72 +247,89 @@ games involves and requires solving include (but are not limited to):
 \end{itemize}
 
 Those are all terribly challenging problems that have spawned several techniques
-and even entire fields of research \citep{buro2003real}. The creation of a machine
-learning system that can at least partially solve all those problems and
-therefore have the chance to be able to play with a human opponent is far from
-being close, even with the relatively game-changing performances of Deep
+and even entire areas of research \citep{buro2003real}. The creation of a
+machine learning system that can at least partially solve all those problems and
+therefore have the chance to have a fair game against a human opponent is far
+from being close, even with the relatively game-changing performances of Deep
 Reinforcement Learning.
 
 In the past years several RTS research platforms have emerged, the most
-prominent ones being Stratagus, OpenRTS and Wargus, however the lack of polish,
-missing game mechanics and features that are normally available in commercial
-RTS games and lack of community does not make them ideal to do AI research,
-especially now that some important parts of it rely also on good amounts of
-available data to be fruitful. A more feasible solution was instead to take one
-of the popular commercial games and adapt it as to make it an AI testing suite;
-in our case, we chose the most popular RTS game every developed: StarCraft.
+prominent ones being Stratagus, OpenRTS and Wargus, however most of them lacked
+the required polish and robustness to be used as AI platforms. Additionally
+commercial games allow researchers to take advantage of the players community to
+collect useful data, which is a critical advantage given how data-hungry most of
+the current state-of-the-art machine learning systems are. A more feasible
+solution is instead to take one of the popular commercial games and adapt it as
+to make it an AI testing suite.
 
 \subsection{StarCraft Brood War}
 
 Starcraft is a relatively old commercial game developed in 1998 by Blizzard
 Entertainment, Inc. that represents the quintessence of Real Time Strategy
 games. Since the beginning it has attracted tens of millions of players, selling
-as many copies and pioneering the use of videogames as competitive e-sport
+as many copies and pioneering the use of video games as competitive e-sport
 platforms. As a consequence StarCraft has been used as a platform for
 professional competitions for nearly 20 years, generating annually an industry
 of several millions of US dollars. When StarCraft 2 was released in 2009, the
-game sold even more copies, generating another wave of popularity for online
-gaming that as now has yet to stop growing. With such a background it should be
-clear why it's important to provide the artificial intelligence and machine
-learning community a way to use the massive amount of collected playing data
-available online to start seriously tackling the complexity of Real-Time
-Strategy games.
-
-Its code is unfortunately completely closed and Blizzard have never
-really opened the game to modifications, but luckily a few users have developed
-a system to read and modify the memory of the game, called Brood War Application
-Programming Interface (BWAPI)\cite{bwapi2011brood}.
+game sold even more copies, creating another wave of excitement towards online
+gaming that has yet to stop growing. With such a background it should be clear
+why it's important to provide the artificial intelligence and machine learning
+community a way to use the massive amount of collected playing data available
+online to seriously start tackling the complexity of Real-Time Strategy games.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{placeholder}
+    \includegraphics[width=0.9\textwidth]{ch2/scbw_temp}
     \caption{Typical in-game screen of a StarCraft Brood War match.}
     \label{fig:ALE}
 \end{figure}
 
 \subsubsection{RTS AI Competitions}
 
-RTS games have recently become popular within the AI research community
-due to their challenging properties. With the goal of eventually beating pro-
-fessional human players at popular RTS games like starcraft, several RTS
-AI competitions have been created to foster competition and help improve the
-state-of-the-art. The first such competition took place in 2006 [11] with the de-
-velopment of the Open RTS (orts) [12] program at the University of Alberta.
-These competitions had several categories focusing on important sub-problems
-in RTS games such as resource gathering and small-scale combat.
-4With the release of the BroodWar Application Programming Interface
-(BWAPI) [39] in 2009, it became possible to control the popular retail game
-of starcraft using C++ programs. In 2010 the first starcraft AI Com-
-petition was organized by Ben Weber at the University of California, Santa
-Cruz as part of the AIIDE conference, and since 2011 it has been organized
-and run annually at the University of Alberta. Two other major starcraft
-AI Competitions have arisen since then, namely the Computational Intelli-
-gence in Games (CIG) Competition, as well as the Student starcraft AI
-Competition (SSCAI) [15]. These competitions have focused on playing the
-full game of starcraft with no cheats or hacks allowed, bots must face the
-same harsh real-time conditions that human players face. These competitions
-have motivated many people to join the RTS AI community including both
-academics and hobbyists alike.
+RTS games have in recent times become a popular source of problems for the AI
+community. The first RTS research competition was created by a group at the
+University of Alberta in 2006 with the goal of creating agents to play Open RTS
+\citep{openrts}. This first competition focused on separately solving some
+aspects of the game such as small combat scenarios and scalable resource
+gathering. The first StarCraft AI competition was organized by a group at the
+University of California, Santa Cruz during AIIDE, a popular game AI conference.
+Following years saw an constant increase in participation and two additional
+StarCraft AI competitions being created: CIG and SSCAI \citep{sscai}. Those
+competitions forced AI researchers and programmers to focus on the entire game
+and to adapt their algorithms to work with the same conditions that human
+players have to deal with. This was done with the goal to eventually take on
+professional human players in the same way AI research has tried to beat
+professional board games players.
+
+\section{Previous work on RTS games}
+
+Real-Time Strategy games decision-making can very easily be categorised into
+three main subproblems (in descending level of abstraction): \emph{strategy},
+\emph{tactics} and \emph{reactive} behaviour. The higher the abstraction, the
+more likely decision-making tends to take the form of strategical behaviour, the
+more local the more likely the process will need to be more reactive and related
+to single-unit control.
+
+Most of previous work in RTS games has been constructed around the idea of using
+pre-engineered knowledge and solving only parts of the entire problem. Several
+aspects of the game have been studied:
+
+\begin{description}
+\item [Opponent modelling] - as players start with no vision of their opponent
+  units or actions, the initial part of the game consists in quickly exploring
+  the environment and understand the overall strategy of the opponent. As the
+  game carries on, more complex strategy prediction needs to be done to
+  successfully win the game (very similarly to games like rock-paper-scissors). 
+\item [Strategy selection] - given a pool of parametrisable strategies, machine
+  learning can be used to optimise the decision-making process at each point of
+  the hierarchy.
+\item [Build-order planning] - a lot of RTS decision-making focuses on balancing
+  exploitation of the environment and continuous exploration. Acquiring control
+  of the resources is a primary goal of the game, and this is often done by
+  optimising the process of building army and structures compositions.
+\item [Combat timing and optimisation] - RTS games are usually well-balanced and
+  strategies require employing the correct units and micromanaging attacks.  
+\end{description}
 
 \section{Summary}
 
@@ -282,3 +350,4 @@ video-game platforms that have successfully been used in artificial intelligence
 research, looking in particular at Real-Time Strategy games. Finally we have
 provided a description of StarCraft, its properties and the rationale behind the
 idea of transforming it into a fully-fledged agent learning platform.
+
