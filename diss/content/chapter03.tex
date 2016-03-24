@@ -1,8 +1,60 @@
-% outline methodology
-% 1. BWAPI
-% 2. Reproducing DQN
-% 3. Making it work on StarCraft
-% 4. Using the symbolic system
-
-
 \chapter{Methodology}
+
+As mentioned in Chapter 1, the goal of this thesis was to develop an interface
+for reinforcement learning research on StarCraft. The following sections
+outline the process of design, implementation and testing of the platform.
+
+\section{Specifications}
+
+Obtaining a list of specifications for the platform was relatively challenging
+for a few reasons: the design needed to provide a powerful environment while
+maintaining a strong degree of expandability. With the sudden re-popularisation
+of reinforcement learning the community has begun challenging previously
+untouched problems, meaning that entirely new architectures might soon appear
+and provide new constraints for existing platforms.
+
+We identified the following minimal requirements:
+
+* Ability to control the StarCraft. This included (but was not limited to) starting, pausing, and ending
+games, killing and re-starting the program, select certain maps.
+* Ability to collect and share game state information.
+* Ability to control the game from the player perspective
+* Ability to collect data from human players and replays available over the internet. 
+
+Additionally, because of the surge of deep reinforcement learning we placed the
+ability to use one or some of the currently popular deep learning libraries on
+top of the requirements list.
+
+% Overall design
+
+\section{Brood War Application Program Interface}
+
+% Description of BWAPI
+
+\section{Pipeline Design} % 2 pages ()
+
+\subsection{BWAPIClient}
+
+\subsection{Collecting the Game State}
+
+\subsection{Screen capturing}
+
+\section{Algorithmic Interface}
+
+\subsection{LuaJIT-based Implementation}
+
+\subsection{Q-learning}
+
+\subsection{DQN}
+
+\section{Summary}
+
+In this chapter we have outlined the motivations behind different chosen
+designs, we have described our implementation, and we have covered the algorithms
+used for testing and baseline construction.
+
+Designing, implementing and testing the platform took well over 800 hours, and a
+couple of separate hundreds of hours were spent reproducing different
+implementations of Q-learning and Deep Q-networks. Unfortunately a lot of time
+was spent refactoring and dealing with the complex behaviour of Windows APIs and
+StarCraft, but the obtained interface seems more than satisfactory.
