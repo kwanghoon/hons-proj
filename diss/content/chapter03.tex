@@ -211,14 +211,62 @@ and finally clustering everything to fit our shared data structures.
 \end{algorithm}
 
 To do so we developed a module called \texttt{StateManager} to take the burden
-of doing all the necessary operations. Algorithm \ref{alg:state} describes the
-rough process. Once the state is collected, the module serialises it and sends
-it over with the previously collected image. As described in the section
-introduction, we use a protobuffer to serialise the game state so that it can be
-sent over the wire and parsed by the server running on the Linux end.
+of doing all the necessary operations. Algorithm \ref{alg:state} gives an
+overview of the process. Once the state is collected, the module serialises it
+and sends it over with the previously collected image. As described in the
+section introduction, we use a protobuffer so that it can be sent over the wire
+and parsed by the server running on the Linux end. \texttt{StateManager} is
+written in such a way that adding units or information to the unit data
+structure can be easily achieved by adding entries to the proto file (which
+specifies the schema to use to build the C++ interface) and modifying
+\texttt{StateManager::setGameState\_} to include the new information into the
+protobuffer.
+
+The design was chosen to be purposely centered around the unit data structure
+because most of the information available to players is effectively coupled to
+the visible units. Everything else can be either inferred or learnt by playing
+the game. We have for instance purposely excluded available information about
+players, races, and upgrades because they didn't provide any particularly useful
+information, however it wouldn't take a huge amount of additional work to
+identify other useful types of data that should be included by default in the
+platform.
+
 
 \subsubsection{Controlling units}
 
+To centralise the control of units we designed and implemented another manager
+module, called \texttt{AgentManager}. Every time a ServerPacket received, the
+module extracts the action identifier, the unit associated to the action and any
+parameters coupled to it. To allow for unit-less actions, we allowed the
+controlled player to correspond to a negative id (usually -1).
+% TODO add parameters to action
+
+One of the main issues of building agents for StarCraft (and most of RTS games)
+is that the available actions are entirely context dependent. 
+
+For instance, 
+* the generic action \texttt{attack target} becomes \texttt{heal
+  target} when the executing unit is a Terran Medic. 
+* without workers, a \texttt{mine target} action is completely invalid and
+cannot be executed. That is also the case when workers are present but the
+target is a unit or a building (in which case the action becomes most of the
+times ``attack'').
+* buildings (and some units) have different upgrades or sometimes no available upgrades at
+all, so a \texttt{upgrade to id} action can have a wide variety of effects. 
+
+We couldn't find a way to tackle the problem, so we created...
+
+The \texttt{Player} module then takes the previously collected \texttt{UnitSet}s
+and orders the matching units some particular action.
+
+Our implementation also allows to reuse the specified primitive actions by sending
+multiple action ids within the packet. 
+% implemented also into the agents code
+% on linux!
+Care was taken to make sure that the system was robust enough to ignore killed
+or blocked units during the action steps.
+
+As a consequence any created unit during this timeframed is ignored.
 
 
 \subsection{Linux Interface}
