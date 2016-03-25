@@ -146,8 +146,76 @@ second to start another game. % CITATION NEEDED (check starcraft times)
 
 \subsubsection{Screen capturing}
 
+% TODO describe window size
+
+BWAPI does not provide any interface to capture the visual output of the
+game\footnote{Some work had been previously done to integrate some form of
+  streaming functionality within BWAPI, but it was dropped in favour of existing
+  tools. See https://github.com/bwapi/bwapi/issues/596}. To fulfill the
+specifications we developed a module to capture the StarCraft window and include
+it in the game state.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{placeholder}
+    \caption{Conversion process of the visual data. The raw pixel data captured
+      using the window handler gets stripped of superfluous data and separated
+      by channel at the same time.}
+    \label{fig:capt_conv}
+\end{figure}
+
+
+To achieve this functionality we used the Graphics Device Interface library
+Gdiplus, included as part of the standard Windows API, to find the StarCraft
+process, grab its window's handler and extract the raw pixel data. The obtained
+data structure stores the pixel in an array of 32bit integers, where integer
+represent the row-wise RGB data and a null byte. 
+
+Before serialising the data to use the network endianness order over the wire,
+we strip the null byte and we cluster the channels separately as to obtain first
+all the red channel values, then the gree channel values, and finally the blue
+channel values (Figure \ref{fig:capt_conv}). It must be noted that while this
+process has been made as fast as possible on the single thread (given the frame
+size), it could be even further optimised by using the fact that the channels
+are essentially already independent and therefore using a standard parallel loop
+and some pointer map to shift the array around.
+
+% TODO describe image serialisation
+
 \subsubsection{Collecting the Game State}
 
+Collecting the game state represented a non-trivial design and implementation
+challenge. BWAPI is designed with in mind the process of writing classical AI
+bots, which usually does not include getting access to the entirety of the game
+data structures. This means that the interface is modular and divided with
+respect to unit classes, weapons, available upgrades, events, forces and so on.
+Collecting the game state in a straightforward manner means therefore querying
+most of the internal interface, filtering out errors and unneeded information,
+and finally clustering everything to fit our shared data structures. 
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{Write here the result }
+ initialization\;
+ \While{While condition}{
+  instructions\;
+  \eIf{condition}{
+   instructions1\;
+   instructions2\;
+   }{
+   instructions3\;
+  }
+ }
+ \caption{How to write algorithms}
+ \label{alg:state}
+\end{algorithm}
+
+To do so we developed a module called \texttt{StateManager} to take the burden
+of doing all the necessary operations. Algorithm \ref{alg:state} describes the
+rough process. Once the state is collected, the module serialises it and sends
+it over with the previously collected image. As described in the section
+introduction, we use a protobuffer to serialise the game state so that it can be
+sent over the wire and parsed by the server running on the Linux end.
 
 \subsubsection{Controlling units}
 
