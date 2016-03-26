@@ -164,7 +164,6 @@ it in the game state.
     \label{fig:capt_conv}
 \end{figure}
 
-
 To achieve this functionality we used the Graphics Device Interface library
 Gdiplus, included as part of the standard Windows API, to find the StarCraft
 process, grab its window's handler and extract the raw pixel data. The obtained
@@ -339,19 +338,82 @@ the protobuffer and sent over.
 
 \subsection{Linux Interface}
 
-\subsubsection{Torch}
+The linux system was also implemented in C++. 
 
+We mostly focused on designing a reusable and generic interface, but we tried to
+offload most of the decisions involving the domain to the protobuf data
+structure and the StarCraft client interface, so that it
+would later be easier to link our platform to different language environments or
+even other games. 
+
+One of the main goals we had in mind for this part of the project was in fact to
+reach a point in which adapting the interface for the language would become just
+a matter of defining some symbols and loading a shared object library. This is
+why why decided to implement the shared interface also using C++, since most
+mainstream programming languages can load C/C++ symbols either through specific
+systems such as Foreign Functions Interfaces (FFIs) or through standard
+libraries.
+
+Several different tensor libraries were reviewed to pick one for this project's
+time frame:
+\begin{description}
+\item [Caffe] - Machine learning library developed by the Berkeley Vision and
+  Learning Center. Initially designed purely for computer vision research
+  applications, its support for other input types is not particularly strong (or
+  is often just absent). It makes heavy use of protobuffers to generate neural
+  network architectures and it supports both a Python and a C++ interface. One
+  of the most cited reasons for choosing this library over the rest is because
+  of the popular Model Zoo: a continuously updated collection of trained models
+  from recent NIPS, ICCV and CVPR papers that can be all used for comparison
+  purposes.
+  
+\item [Theano] - One of the oldest machine learning libraries focused on deep
+  learning. Written in Python using numpy to support fast mathematical
+  operations, it has spawned several high-level deep learning frameworks and is
+  currently one of the most popular tensor libraries. The initial design was
+  produce with in mind having to support the variety of use cases it later got
+  used for, so the library has grown somewhat unevenly, making it somewhat
+  bug-prone and difficult to contribute in comparison to other open source
+  libraries.
+
+\item [Torch] - Tensor library written in C and Lua mostly used by Facebook,
+  Google DeepMind and a few other companies \cite{soumith}. It relies on LuaJIT,
+  a Just-In-Time interpreter that allows Lua to run at speed comparable to pure
+  C code. It has a modular framework that makes it easy to develop non-standard
+  layers and architectures. While Lua is a relatively small and readable
+  language, its community is small and doesn't compare to the Python, C++ or
+  Java communities; this makes the language less attractive as a whole for
+  research because of the lack of general-purpose libraries.
+\end{description}
+
+We decided to choose Torch because at the time (July 2015) the majority of
+available Deep Reinforcement Learning code had been written on top of it. Since
+then the available frameworks focused on tensor-based computation and deep
+learning nearly doubled (see for instance Microsoft's CNTK, Google's TensorFlow,
+Berkeley's CGT), so the choice would not have been as straightforward.
+ 
 \subsubsection{LuaJIT-based Implementation}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{placeholder}
+    \caption{Overview of the architecture of the Linux sub-system.}
+    \label{fig:arch_linux}
+\end{figure}
 
 \section{Algorithmic Interface}
 
 \subsection{Q-learning}
 
+\subsubsection{Task dependent state representation}
+
+\subsubsection{Multi-unit Q-learning}
+
 \subsection{DQN}
 
 \subsubsection{Multi-unit DQN}
 
-\section{Remainin Implementation Details}
+\section{Remaining Implementation Details}
 
 \section{Summary}
 
