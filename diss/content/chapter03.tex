@@ -243,18 +243,32 @@ controlled player to correspond to a negative id (usually -1).
 
 One of the main issues of building agents for StarCraft (and most of RTS games)
 is that the available actions are entirely context dependent. 
+For instance:
 
-For instance, 
-* the generic action \texttt{attack target} becomes \texttt{heal
-  target} when the executing unit is a Terran Medic. 
-* without workers, a \texttt{mine target} action is completely invalid and
-cannot be executed. That is also the case when workers are present but the
-target is a unit or a building (in which case the action becomes most of the
-times ``attack'').
-* buildings (and some units) have different upgrades or sometimes no available upgrades at
-all, so a \texttt{upgrade to id} action can have a wide variety of effects. 
+\begin{itemize}
+\item the generic action \texttt{attack target} becomes \texttt{heal target}
+  when the executing unit is a Terran Medic.
+\item without workers, a \texttt{mine target} action is completely invalid and
+  cannot be executed. That is also the case when workers are present but the
+  target is a unit or a building (in which case the action becomes most of the
+  times ``attack'').
+\item buildings (and some units) have different upgrades or sometimes no
+  available upgrades at all, so a \texttt{upgrade to id} action can have a wide
+  variety of effects.
+\end{itemize} 
 
-We couldn't find a way to tackle the problem, so we created...
+We couldn't find a way to quickly tackle the problem within the project
+time frame, so we created a few different types of actions based on some
+particular scenarios, making sure to designing them to be as general and
+reusable as possible. We ended up with three classes of actions:
+
+\begin{description}
+\item [Player Actions] - Those actions mostly include game-wide primitives such
+  as \texttt{move screen [up|down|left|right]}, and mouse controls such as
+  \texttt{click [left|right][pos]} and \texttt{select [area]}.
+\item [Basic Unit Actions] -
+\item [Complex Unit Actions] - 
+\end{description}
 
 The \texttt{Player} module then takes the previously collected \texttt{UnitSet}s
 and orders the matching units some particular action.
@@ -268,6 +282,60 @@ or blocked units during the action steps.
 
 As a consequence any created unit during this timeframed is ignored.
 
+\subsubsection{Generating Rewards}
+
+Designing reward functions in RTS games like StarCraft is another problem that
+has many possible but inter-incomparable solutions, making it problematic to
+find a generic reward function that covers all possible scenarios. In
+particular, when we inspect games played by human players we can imperically
+observe that the ideal reward function might also need to be somehow engineered
+to be hierarchically structured, as the ``goodness'' of a state-action pair is
+often entirely context dependent and changes depending on whether it's being
+estimated over a local micro-scenario or the entire game. Let's look at the
+structure of a common competitive game between two players.
+
+It is a widely recognised fact that most board and computer games can be divided
+in three major phases, each usually possessing an almost completely isolated
+meta-game from the others. Those phases are often called early-game, mid-game
+and end-game. In StarCraft, the early game is by design forcefully dominated by
+a combination of exploration, resource-gathering and build-order optimisation.
+The mid-game is the most variable of the three, and includes making strategic
+and tactical decisions to optimise (and protect) a chosen build-order with
+respect to a roughly constant resource income income rate. This phase of the
+game significantly changes depending on the strategy of both players and the map
+topology. Finally, the end-game is the last phase of the game and mostly
+consists in the winning player successfully carrying their final part of the
+strategy, or the losing player making a comeback thanks to either errors of the
+opponent or moves that are carefully-thought but often containing some amount of
+``gambling''.
+
+In reality it can also be observed that professional StarCraft players behave
+similarly to chess and go players, where the meta-game tends to rely on
+particular pre-determined dynamic build-order strategies to choose which tactics
+to use when variations of known scenarios appear. At high levels very often the
+sequence of actions becomes so close to be optimal (considering human
+limitations) that the game effectively is won by which strategy is strong
+against the other (in a rock-paper-scissors fashion).
+
+All of those factors contribute to complicate the design of a general purpose
+reward system, especially if the final goal is to be able to play good games
+against both amateur and professional players. Some research has explored
+learning the reward function using techniques like Inverse Reinforcement
+Learning\citep{ng2000algorithms}, but none of the explored domains are even
+remotely comparable to StarCraft's extremely large state space.
+
+% TODO Put example image here
+
+To get around the problem we designed a simple module called
+\texttt{RewardManager}, whose goal mostly consists in analysing the current
+state (or a history of the states) and providing a numerical reward. Depending
+on the configuration the module can also output a array of values for each unit,
+providing support for multi-agent settings or some hierarchical reinforcement
+learning methods such as Q-decomposition \citep{russell2003q}. Once the reward
+is calculated it's then taken by the \texttt{StateManager} to be inserted into
+the protobuffer and sent over.
+
+% TODO add that more work is needed
 
 \subsection{Linux Interface}
 
