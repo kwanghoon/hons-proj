@@ -265,8 +265,8 @@ reusable as possible. We ended up with three classes of actions:
 \item [Player Actions] - Those actions mostly include game-wide primitives such
   as \texttt{move screen [up|down|left|right]}, and mouse controls such as
   \texttt{click [left|right][pos]} and \texttt{select [area]}.
-\item [Basic Unit Actions] -
-\item [Complex Unit Actions] - 
+\item [Basic Unit Actions] - TODO
+\item [Complex Unit Actions] - TODO
 \end{description}
 
 The \texttt{Player} module then takes the previously collected \texttt{UnitSet}s
@@ -356,6 +356,7 @@ libraries.
 
 Several different tensor libraries were reviewed to pick one for this project's
 time frame:
+
 \begin{description}
 \item [Caffe] - Machine learning library developed by the Berkeley Vision and
   Learning Center. Initially designed purely for computer vision research
@@ -386,13 +387,16 @@ time frame:
   research because of the lack of general-purpose libraries.
 \end{description}
 
-We decided to choose Torch because at the time (July 2015) the majority of
+We chose Torch because at the time (July 2015) the majority of
 available Deep Reinforcement Learning code had been written on top of it. Since
 then the available frameworks focused on tensor-based computation and deep
-learning nearly doubled (see for instance Microsoft's CNTK, Google's TensorFlow,
-Berkeley's CGT), so the choice would not have been as straightforward.
+learning nearly doubled (see for instance Microsoft's CNTK, Google's TensorFlow
+and Berkeley's CGT), so the choice would not have been as straightforward had it
+been more recent. That said, we still believe our choice to the best one for the
+project, considering it effectively forced the C++ interface to be modular right
+from the start.
  
-\subsubsection{LuaJIT-based Implementation}
+\subsubsection{C++ Interface}
 
 \begin{figure}[h]
     \centering
@@ -401,7 +405,64 @@ Berkeley's CGT), so the choice would not have been as straightforward.
     \label{fig:arch_linux}
 \end{figure}
 
+We designed the Linux C++ interface to be complementary to the Windows client.
+The interface started simply as a standard socket server and subsequently
+evolved into a fully-fledged controller after adding a protobuffer parser, a
+controller class and a storage system. Like the client, the server system
+supports both synchronous and asynchronous modes, using non-blocking sockets and
+a couple of threads.
+
+The overall system is coupled with the client and requires to updated the
+generated protobuffer interface every time the proto configuration file is
+changed in the client. Because of this we couldn't escape from adding the
+library as a dependency, but this update was made painless by scripting the
+whole process.
+
+The system is split into three different modules:
+\begin{description}
+\item [Server] - Manages the connection with the client. It's the first object
+  that the interfaces initialises, so it blocks the execution of the process
+  until at least a client connects to it. The module was designed from the start
+  to support multiple sockets and clients, but we didn't find the time to spin
+  more than 2 instances of StarCraft on the cloud and run an heavy stress-test
+  for this functionality.
+\item [RingBuffer] - To provide a native way of storing and managing long-term
+  information received from the client, we implemented a module to act as a
+  middle-ware storage system based on a cyclic buffer. The history length can be
+  changed when initialised and it's optimised so that the operation of switching
+  data around the buffer is as fast as possible (this was done by manipulating
+  pointers).
+\item [BotInterface] - Essentially acts as the manager class for the whole interface.
+  It starts the server, it initialises the data structures for the ring buffer
+  and the temporary protobuf parser, and it provides methods to interact with
+  the client.
+\end{description}
+
+Once we developed and tested the C++ interface, we had to create a LuaJIT
+wrapper around it to allow our lua agents to use it.
+
+\subsubsection{Lua-compatible Interface}
+
+LuaJIT provides an FFI library to wrap C/C++ objects and their interfaces. The
+library provides a way to parse C declarations, which can then be used to read a
+compiled shared object file containing the C objects definitions. This allows to
+integrate C and C++ code (exported as C) very quickly, without any need to
+manually write language bindings in Lua. The Just-In-Time compiler generates
+then instructions that are roughly as efficient as the ones obtained by standard
+C compilers like GNU \texttt{gcc} and \texttt{Clang}.
+
+Arguably the most interesting part about our interface is that it provides a
+method to take the raw pixel data sent by client and transform it into a Torch
+tensor that can then be used in our lua agents. This was possible by using the
+Torch C API provided with the framework, which allowed us to copy the obtained
+from the C heap to the LuaJIT storage system. We therefore became able to treat
+our image as a Torch object and take advantage of the provided Torch
+\texttt{image} library.
+
+
 \section{Algorithmic Interface}
+
+
 
 \subsection{Q-learning}
 
