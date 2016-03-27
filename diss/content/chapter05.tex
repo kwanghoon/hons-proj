@@ -1,75 +1,30 @@
-% outline discussion
-% 1. Symbolic restructuring
-% 2. DQN results 
-% 3. Problems with StarCraft
-% 4. Can we make the interface better? 
+% outline results
+% 1. Failure of standard DQN
+% 2. Symbolic representation based Q-learning
+% 3. Improved DQN results
 
-\chapter{Discussion}
+\chapter{Results}
 
-\section{Framework Evaluation}
+\section{Platform Testing}
+% analytical results
+% * CPU tests for week run
+% * Memory usage
+% * speed comparisons w/ modes
 
-The initial idea was to create modules to cluster part of the useful game state
-in such a way that researchers would have only needed to ``configure'' a reward
-function (if needed). Moreover one of the first design decisions turned out to
-be slightly detrimental when we switched to the multi-client architecture,
-making the implementation unnecessarily tricky and bug-prone.
+\section{Q-learning}
 
-\subsection{How can we improve this?}
+\section{DQN}
 
-The easiest but most painful solution (implementation-wise) to the design
-problem would be to partially re-design the way the client handles the game,
-while leaving the interface unchanged.
+\subsection{Simple Version}
 
-This could be achieved in different ways:
+\subsection{Multi-unit DQN}
+% simple tests
+%  message checks
+%  image checks
+%  screen movement policy
+%  grid movement
+% many vs one unit
 
-\begin{itemize}
-\item The client could be split in three different asynchronous modules: a
-  StarCraft handler to control Windows and the StarCraft process, a Game State
-  collector to observe and collect the state using BWAPI and WinAPI, and a
-  networking interface to deal with the external interface.
-\item BWAPIClient could be expanded to fully control the game in a similar
-  fashion.
-\end{itemize}
-
-\section{Challenges for machine learning approaches}
-
-\subsection{State exploration as a policy}
-
-\subsection{Hierarchical Decision-Making}
-
-In Chapter 2 we have discussed some work in Hierarchical Reinforcement Learning
-that could be used in principle to tackle StarCraft, however no particular model
-seems to fit all the requirements of the platform, especially if we take and
-end-to-end approach to the problem. It's probably fair to speculate that
-similarly to AlphaGo, a reinforcement learning framework will need some amount
-of strong supervision to learn good overall strategies and hand-tuned feature
-extractors.
-
-% Cover Russell work
-
-\section{Future Work}
-
-\subsection{Full Linux compatibility}
-
-The great majority of AI and machine learning researchers do not use Windows as
-their development environment. Having to use a VM to host the StarCraft client
-and the interface means that there is a higher cost then normal associated with
-using the platform (i.e. it's not straightforward to provide a simple
-installation script or a working out-the-box environment).
-
-In the past some parts of BWAPI were compatible with the WINE, a Linux
-environment that tries to reproduce the Windows API and provide tools for
-running Windows software on unix platforms. Porting the entirety of our pipeline
-over Linux will mean being able to significantly simplify the integration with
-other state-of-the-art machine learning systems. 
-
-\subsection{ROS integration}
-
-% picoros
-
-% ros 2.0
-
-
-\subsection{Policy Reuse}
-
-% include also policy distillation?
+% multi-unit setting
+% change of action window
+% easy maps vs hard maps

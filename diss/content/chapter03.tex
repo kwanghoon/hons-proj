@@ -1,4 +1,4 @@
-\chapter{Methodology}
+\chapter{Platform Design and Implementation}
 
 As mentioned in Chapter 1, the goal of this thesis was to develop an interface
 for reinforcement learning research on StarCraft. The following sections
@@ -459,23 +459,33 @@ from the C heap to the LuaJIT storage system. We therefore became able to treat
 our image as a Torch object and take advantage of the provided Torch
 \texttt{image} library.
 
+\subsubsection{Connecting the agents}
 
-\section{Algorithmic Interface}
+To provide the interface to the agent we used the FFI library to wrap the C++
+objects, wrapping the resulting functions into a class using Torch's
+\texttt{Class} library, finally creating the \texttt{bw\_interface} module.
 
+We didn't wrap the entirety of the C++ functionality because we decided to
+implement the ring buffer functionality in our agents as well, as to match the
+common interface available to agents running on ALE. The final accessible
+version of the interface to the agents ended up therefore containing the
+following functions:
 
-
-\subsection{Q-learning}
-
-\subsubsection{Task dependent state representation}
-
-\subsubsection{Multi-unit Q-learning}
-
-\subsection{DQN}
-
-\subsubsection{Multi-unit DQN}
-
-\section{Remaining Implementation Details}
-
+\begin{description}
+\item [update\_data(void)] -
+\item [send\_packet(void)] -
+\item [gen\_packet(bool, bool)] -
+\item [add\_action(int, int*)] - Takes a unit id and an array of action ids and
+  adds it to the list of actions.
+\item [update\_data(void)] -
+\item [get\_image\_tensor(void)] - Returns the last stored 
+\item [get\_packet\_string(void)] -
+\item [get\_last\_turn\_data(void)] -
+\item [get\_state(void)] -
+\item [step(table, bool)] -
+\item [new\_game(bool)] -
+\end{description}
+  
 \section{Summary}
 
 In this chapter we have outlined the motivations behind different chosen

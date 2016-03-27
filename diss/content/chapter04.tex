@@ -1,6 +1,26 @@
-% outline results
-% 1. Failure of standard DQN
-% 2. Symbolic representation based Q-learning
-% 3. Improved DQN results
+\chapter{Experimental Methodology} 
 
-\chapter{Results}
+\section{Computing Resources}
+
+The entirety of the development was done on a 8-core machine...
+
+The Q-learning algorithm was tested on this same machine, while 
+
+\section{Q-learning}
+
+\subsection{Task dependent state representation}
+
+Providing a state representation for quickly testing the whole system ended up
+resulting in a far more challenging problem than initially estimated. To be able
+to extensively test the symbolic game state data being sent by the client we
+wanted to obtain a useful state representation without having to use a black-box
+function approximator such as an artificial neural network. Using a neural
+network would have made it very hard to do automatic testings. Moreover we
+wanted to check and explore how hard it would have actually been to use standard
+state-compression techniques for StarCraft's large state space.
+
+\subsection{Multi-unit Q-learning}
+
+\section{DQN}
+
+\subsection{Multi-unit DQN}
