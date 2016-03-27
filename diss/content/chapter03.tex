@@ -467,9 +467,9 @@ objects, wrapping the resulting functions into a class using Torch's
 
 We didn't wrap the entirety of the C++ functionality because we decided to
 implement the ring buffer functionality in our agents as well, as to match the
-common interface available to agents running on ALE. The final accessible
-version of the interface to the agents ended up therefore containing the
-following functions:
+common interface available to agents running on ALE for the sake of consistency.
+The final accessible version of the interface to the agents ended up therefore
+containing the following functions:
 
 \begin{description}
 \item [update\_data(void)] -
@@ -485,15 +485,16 @@ following functions:
 \item [step(table, bool)] -
 \item [new\_game(bool)] -
 \end{description}
-  
+ 
 \section{Summary}
 
 In this chapter we have outlined the motivations behind different chosen
 designs, we have described our implementation, and we have covered the algorithms
 used for testing and baseline construction.
 
-Designing, implementing and testing the platform took well over 800 hours, and a
-couple of separate hundreds of hours were spent reproducing different
+Designing, implementing and testing the platform took well over 800 hours, while
+a couple of other hundreds of hours were spent reproducing different
 implementations of Q-learning and Deep Q-networks. Unfortunately a lot of time
-was spent refactoring and dealing with the complex behaviour of Windows APIs and
-StarCraft, but the obtained interface seems more than satisfactory.
+was spent refactoring and dealing with the complex - and sometimes buggy -
+behaviour of Windows APIs and StarCraft, however our efforts paid off by giving
+us an extensible and useful platform.
