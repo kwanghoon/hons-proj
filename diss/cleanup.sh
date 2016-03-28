@@ -5,8 +5,8 @@ set -x
 
 function clean_content {
     find ./content/ -type f ! -name '*.tex' -delete
-    rm -rf ./content/auto
-    rm ./content/_region_.tex
+    rm -rf ./content/auto || true
+    rm ./content/_region_.tex || true
 }
 
 clean_content
