@@ -1,13 +1,59 @@
-\documentclass[bsc, twoside, parskip, abbrevs, notimes, normalheadings, deptreport]{styles/infthesis}
+\documentclass[bsc, twoside, parskip, abbrevs, notimes, normalheadings,
+singlespacing, deptreport]{styles/infthesis}
 
 \usepackage{graphicx}
 \graphicspath{ {images/} }
+
+\usepackage{caption}
+\usepackage{geometry}
 
 \usepackage[utf8]{inputenc}
 \usepackage{array, booktabs}
 
 \usepackage{algorithm2e}
 \usepackage{tikz}
+\usepackage{listings}
+
+\geometry{left=1.0in,right=1.0in,top=1.0in,bottom=1.0in }
+
+\lstset{
+  frame=top,frame=bottom,
+  basicstyle=\small\normalfont\sffamily,    % the size of the fonts that are used for the code
+  stepnumber=1,                           % the step between two line-numbers. If it is 1 each line will be numbered
+  numbersep=10pt,                         % how far the line-numbers are from the code
+  tabsize=2,                              % tab size in blank spaces
+  extendedchars=true,                     %
+  breaklines=true,                        % sets automatic line breaking
+  captionpos=t,                           % sets the caption-position to top
+  mathescape=true,
+  stringstyle=\color{white}\ttfamily, % Farbe der String
+  showspaces=false,           % Leerzeichen anzeigen ?
+  showtabs=false,             % Tabs anzeigen ?
+  xleftmargin=17pt,
+  framexleftmargin=17pt,
+  framexrightmargin=17pt,
+  framexbottommargin=5pt,
+  framextopmargin=5pt,
+  showstringspaces=false      % Leerzeichen in Strings anzeigen ?
+ }
+ 
+\DeclareCaptionFormat{listing}{\rule{\dimexpr\textwidth+17pt\relax}{0.4pt}\par\vskip1pt#1#2#3}
+\captionsetup[lstlisting]{format=listing,singlelinecheck=false, margin=0pt, font={sf},labelsep=space,labelfont=bf}
+
+\renewcommand\lstlistingname{Listing}
+
+\DeclareMathVersion{sans}
+\SetSymbolFont{operators}{sans}{OT1}{cmbr}{m}{n}
+\SetSymbolFont{letters}  {sans}{OML}{cmbrm}{m}{it}
+\SetSymbolFont{symbols}  {sans}{OMS}{cmbrs}{m}{n}
+
+\lstnewenvironment{sflisting}[1][]
+{\noindent\minipage{\linewidth}\medskip 
+   \lstset{basicstyle=\ttfamily\footnotesize,frame=single,#1}}
+  {\endminipage}
+
+\lstnewenvironment{mehlisting}[1][]
+{\lstset{#1}\mathversion{sans}}{}
 
 \usepackage[round]{natbib}
 
@@ -21,7 +67,7 @@
 
 \date{\today}
 
-\input{content/abstract}
+% \input{content/abstract}
 
 \begin{document}
 
@@ -42,9 +88,9 @@
 \input{content/chapter02} % background
 \input{content/chapter03} % implementation
 \input{content/chapter04} % experimental methodology
-\input{content/chapter05} % results
-\input{content/chapter06} % discussion
-\input{content/chapter07} % conclusion
+% \input{content/chapter05} % results
+% \input{content/chapter06} % discussion
+% \input{content/chapter07} % conclusion
 
 
 \bibliographystyle{plainnat}
