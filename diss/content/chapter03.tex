@@ -402,9 +402,7 @@ against both amateur and professional players. Some research has explored
 learning the reward function using techniques like Inverse Reinforcement
 Learning\citep{ng2000algorithms}, but none of the explored domains possess state
 spaces even remotely comparable StarCraft's.
-
 % TODO Put example image here
-
 To get around the problem we designed a bare-bone module called
 \texttt{RewardManager} whose goal mostly consists in analysing the current state
 (or a history of the states) and providing a numerical reward. Depending on the
@@ -418,60 +416,59 @@ the protobuffer and sent over to the agent.
 
 \subsection{Linux Interface}
 
-The linux system was also implemented in C++. 
-
-We mostly focused on designing a reusable and generic interface, but we tried to
-offload most of the decisions involving the domain to the protobuf data
-structure and the StarCraft client interface, so that it
-would later be easier to link our platform to different language environments or
-even other games. 
+Similarly to the Windows client, the Linux server system was also implemented in
+C++. This allowed us to share some of the networking code across the two
+modules. We mostly focused on designing a reusable and generic interface, but we
+tried to offload most of the decisions involving the domain to the protobuf data
+structure and the StarCraft client interface, so that it would later be easier
+to link our platform to different language environments or even other games.
 
 One of the main goals we had in mind for this part of the project was in fact to
-reach a point in which adapting the interface for the language would become just
-a matter of defining some symbols and loading a shared object library. This is
-why why decided to implement the shared interface also using C++, since most
-mainstream programming languages can load C/C++ symbols either through specific
-systems such as Foreign Functions Interfaces (FFIs) or through standard
-libraries.
+reach a point in which adapting the interface for any language (or environment)
+would become just a matter of defining some symbols and loading a shared object
+library. The ability of most mainstream programming languages to load C/C++
+symbols either through specific systems such as Foreign Functions Interfaces
+(FFIs), or through standard libraries, additionally reinforced our language
+decision.
 
-Several different tensor libraries were reviewed to pick one for this project's
-time frame:
+For this project we decided to focus on making an interface exclusively for one
+tensor library. We reviewed several environments to take this decision:
 
 \begin{description}
-\item [Caffe] - Machine learning library developed by the Berkeley Vision and
-  Learning Center. Initially designed purely for computer vision research
-  applications, its support for other input types is not particularly strong (or
-  is often just absent). It makes heavy use of protobuffers to generate neural
-  network architectures and it supports both a Python and a C++ interface. One
-  of the most cited reasons for choosing this library over the rest is because
-  of the popular Model Zoo: a continuously updated collection of trained models
-  from recent NIPS, ICCV and CVPR papers that can be all used for comparison
-  purposes.
+\item [Caffe \citep{jia2014caffe}] - Machine learning library developed by the
+  Berkeley Vision and Learning Center. Initially designed purely for computer
+  vision research applications, its support for other input types is not
+  particularly strong (or is often just absent). It makes heavy use of
+  protobuffers to generate neural network architectures and it supports both a
+  Python and a C++ interface. One of the most cited reasons for choosing this
+  library over the rest is because of the popular Model Zoo: a continuously
+  updated collection of trained models from recent NIPS, ICCV and CVPR papers
+  that can be all used for comparison purposes.
   
-\item [Theano] - One of the oldest machine learning libraries focused on deep
-  learning. Written in Python using numpy to support fast mathematical
-  operations, it has spawned several high-level deep learning frameworks and is
-  currently one of the most popular tensor libraries. The initial design was
-  produce with in mind having to support the variety of use cases it later got
-  used for, so the library has grown somewhat unevenly, making it somewhat
-  bug-prone and difficult to contribute in comparison to other open source
-  libraries.
+\item [Theano \citep{bergstra2010theano}] - One of the oldest machine learning
+  libraries focused on deep learning. Written in Python using numpy to support
+  fast mathematical operations, it has spawned several high-level deep learning
+  frameworks and is currently one of the most popular tensor libraries. The
+  initial design was produce with in mind having to support the variety of use
+  cases it later got used for, so the library has grown relatively unevenly,
+  making it somewhat bug-prone and difficult to contribute to in comparison to
+  other open source libraries.
 
-\item [Torch] - Tensor library written in C and Lua mostly used by Facebook,
-  Google DeepMind and a few other companies \cite{soumith}. It relies on LuaJIT,
-  a Just-In-Time interpreter that allows Lua to run at speed comparable to pure
-  C code. It has a modular framework that makes it easy to develop non-standard
-  layers and architectures. While Lua is a relatively small and readable
-  language, its community is small and doesn't compare to the Python, C++ or
-  Java communities; this makes the language less attractive as a whole for
-  research because of the lack of general-purpose libraries.
+\item [Torch \citep{collobert2011torch}] - Tensor library written in C and Lua
+  mostly used by Facebook, Google DeepMind and a few other companies. It relies
+  on LuaJIT, a Just-In-Time interpreter that allows Lua to run at speed
+  comparable to pure C code. It has a modular framework that makes it easy to
+  develop non-standard layers and architectures. While Lua is a relatively small
+  and readable language, its community is small and doesn't compare to the
+  Python, C++ or Java communities; this makes the language less attractive as a
+  whole for research because of the lack of general-purpose libraries.
 \end{description}
 
-We chose Torch because at the time (July 2015) the majority of
-available Deep Reinforcement Learning code had been written on top of it. Since
-then the available frameworks focused on tensor-based computation and deep
-learning nearly doubled (see for instance Microsoft's CNTK, Google's TensorFlow
-and Berkeley's CGT), so the choice would not have been as straightforward had it
+We chose Torch because at the time (July 2015) the majority of available Deep
+Reinforcement Learning code had been written on top of it. Since then the
+available frameworks focused on tensor-based computation and deep learning
+nearly doubled (see for instance Microsoft's CNTK, Google's TensorFlow, and
+Berkeley's CGT), so the choice would not have been as straightforward had it
 been more recent. That said, we still believe our choice to the best one for the
 project, considering it effectively forced the C++ interface to be modular right
 from the start.
@@ -489,12 +486,12 @@ We designed the Linux C++ interface to be complementary to the Windows client.
 The interface started simply as a standard socket server and subsequently
 evolved into a fully-fledged controller after adding a protobuffer parser, a
 controller class and a storage system. Like the client, the server system
-supports both synchronous and asynchronous modes, using non-blocking sockets and
-a couple of threads.
+supports both synchronous and asynchronous modes, using non-blocking threaded
+TCP sockets.
 
-The overall system is coupled with the client and requires to updated the
+The overall system is coupled with the client and requires to update the
 generated protobuffer interface every time the proto configuration file is
-changed in the client. Because of this we couldn't escape from adding the
+changed on the client side. Because of this we couldn't escape from adding the
 library as a dependency, but this update was made painless by scripting the
 whole process.
 
@@ -510,71 +507,71 @@ The system is split into three different modules:
   information received from the client, we implemented a module to act as a
   middle-ware storage system based on a cyclic buffer. The history length can be
   changed when initialised and it's optimised so that the operation of switching
-  data around the buffer is as fast as possible (this was done by manipulating
-  pointers).
-\item [BotInterface] - Essentially acts as the manager class for the whole interface.
-  It starts the server, it initialises the data structures for the ring buffer
-  and the temporary protobuf parser, and it provides methods to interact with
-  the client.
+  data around the buffer is as fast as possible (this was done by doing some
+  standard pointer manipulation).
+\item [BotInterface] - This module essentially acts as the manager class for the
+  whole interface. It starts the server, it initialises the data structures for
+  the ring buffer and the temporary protobuf parser, and it provides methods to
+  interact with the client.
 \end{description}
 
 Once we developed and tested the C++ interface, we had to create a LuaJIT
-wrapper around it to allow our lua agents to use it.
+wrapper around it to allow our Lua agents to use it.
 
 \subsubsection{Lua-compatible Interface}
 
-LuaJIT provides an FFI library to wrap C/C++ objects and their interfaces. The
-library provides a way to parse C declarations, which can then be used to read a
-compiled shared object file containing the C objects definitions. This allows to
-integrate C and C++ code (exported as C) very quickly, without any need to
-manually write language bindings in Lua. The Just-In-Time compiler generates
-then instructions that are roughly as efficient as the ones obtained by standard
-C compilers like GNU \texttt{gcc} and \texttt{Clang}.
+LuaJIT provides an FFI library to wrap C/C++ objects and their interfaces
+\citep{pall2008luajit}. The library provides a way to parse C declarations,
+which can then be used to read a compiled shared object file containing the C
+objects definitions. This allows to integrate C and C++ code (exported as C)
+very quickly, without any need to manually write language bindings in Lua. The
+Just-In-Time compiler generates instructions that are roughly as efficient
+as the ones obtained by standard C compilers like GNU \texttt{gcc} and
+\texttt{Clang}.
 
 Arguably the most interesting part about our interface is that it provides a
 method to take the raw pixel data sent by client and transform it into a Torch
-tensor that can then be used in our lua agents. This was possible by using the
+tensor that can then be used by the Lua agents. This was possible by using the
 Torch C API provided with the framework, which allowed us to copy the obtained
 from the C heap to the LuaJIT storage system. We therefore became able to treat
 our image as a Torch object and take advantage of the provided Torch
-\texttt{image} library.
+\texttt{image} library. We also leveraged the Torch \texttt{cunn} library to
+make use of CUDA \citep{nvidia2008programming}, NVIDIA's GPU programming
+library. This allowed us to train and test some of our agents on recent GPUs.
 
 \subsubsection{Connecting the agents}
 
 To provide the interface to the agent we used the FFI library to wrap the C++
-objects, wrapping the resulting functions into a class using Torch's
-\texttt{Class} library, finally creating the \texttt{bw\_interface} module.
+objects, grouping the resulting functions into a class using Torch's
+\texttt{Class} library. The end-result was \texttt{bw\_interface}, a module that agents could include
+and use as a standard Lua table. 
 
 We didn't wrap the entirety of the C++ functionality because we decided to
 implement the ring buffer functionality in our agents as well, as to match the
 common interface available to agents running on ALE for the sake of consistency.
-The final accessible version of the interface to the agents ended up therefore
-containing the following functions:
+The final accessible version of the interface to the agents ended up containing
+a rich interface. Some important functions are for instance:
 
 \begin{description}
-\item [update\_data(void)] -
 \item [send\_packet(void)] -
 \item [gen\_packet(bool, bool)] -
 \item [add\_action(int, int*)] - Takes a unit id and an array of action ids and
   adds it to the list of actions.
-\item [update\_data(void)] -
 \item [get\_image\_tensor(void)] - Returns the last stored 
-\item [get\_packet\_string(void)] -
-\item [get\_last\_turn\_data(void)] -
-\item [get\_state(void)] -
-\item [step(table, bool)] -
-\item [new\_game(bool)] -
+\item [get\_state(void)] - Return the game state as a hierarchical Lua table
+  that the agent can walk through by simple recursive exploration of the
+  attached dictionary of keys. The \texttt{inspect} library is used to test the
+  state to check for possible errors.
+\item [step(table, bool)] - In synchronous mode, order the client to update the
+  game and perform a step. A step is defined as the amount of turns it takes to
+  complete the defined set of actions (which can be a fixed amount).
+\item [new\_game(bool)] - Order the game to start a new game and return the
+  first state-reward pair.
 \end{description}
  
 \section{Summary}
 
-In this chapter we have outlined the motivations behind different chosen
-designs, we have described our implementation, and we have covered the algorithms
-used for testing and baseline construction.
-
-Designing, implementing and testing the platform took well over 800 hours, while
-a couple of other hundreds of hours were spent reproducing different
-implementations of Q-learning and Deep Q-networks. Unfortunately a lot of time
-was spent refactoring and dealing with the complex - and sometimes buggy -
-behaviour of Windows APIs and StarCraft, however our efforts paid off by giving
-us an extensible and useful platform.
+In this chapter we have outlined the architecture of our entire system, looking
+in particular at the design choices related to each module. We have described
+our implementation and delineated some challenging issues when modelling RTS
+games in a programmatic fashion.
