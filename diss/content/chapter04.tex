@@ -85,7 +85,7 @@ state in some way.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{placeholder}
+    \includegraphics[width=0.9\textwidth]{ch4/discrete_state}
     \caption{Discretisation of state based on units health points.}
     \label{fig:discrete_state}
 \end{figure}
@@ -121,7 +121,7 @@ function (Figure \ref{fig:array_state}).
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{placeholder}
+    \includegraphics[width=\textwidth]{ch4/array_state}
     \caption{Mapping from slices to index tensor.}
     \label{fig:array_state}
 \end{figure}
@@ -163,8 +163,8 @@ action.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{placeholder}
-    \caption{Deep Q-learning visualised.}
+    \includegraphics[width=\textwidth]{ch4/dqn}
+    \caption{Deep Q-learning setting.}
     \label{fig:dqn}
 \end{figure}
 
@@ -195,6 +195,13 @@ our algorithms: by default they assume that the controlled agent is one, while
 instead in StarCraft the player usually has to independently control multiple
 units.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{ch4/parallelq}
+    \caption{Visualisation of the parallel system for Q-learning.}
+    \label{fig:parallelq}
+\end{figure}
+
 We didn't manage to find the time to implement a multi-agent reinforcement
 learning algorithm, so we decide to handle multi-unit scenarios in both
 Q-learning and Deep Q-learning. 
@@ -209,12 +216,6 @@ Instead we came up with a system to optimise the execution of each unit action
 by parallelising the decision process using the duration of the commanded
 primitive as a time buffer.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.9\textwidth]{placeholder}
-    \caption{Visualisation of the parallel system for Q-learning.}
-    \label{fig:parallelq}
-\end{figure}
 
 Q-learning was the easy to adapt, as the only required change to the algorithm
 was to generate the state with respective to selected units and send the
@@ -226,9 +227,9 @@ of the screen (Figure \ref{fig:paralleldq}).
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{placeholder}
+    \includegraphics[width=0.9\textwidth]{ch4/paralleldqn}
     \caption{Visualisation of the parallel system for Deep Q-learning.}
-    \label{fig:paralleldq}
+    \label{fig:paralleldqn}
 \end{figure}
 
 This had the additional unexpected consequence of further randomising our
