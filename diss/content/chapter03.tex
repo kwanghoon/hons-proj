@@ -1,17 +1,18 @@
 \chapter{Platform Design and Implementation}
 
-As mentioned in Chapter 1, the goal of this thesis was to develop an interface
-for reinforcement learning research on StarCraft. The following sections
-outline the process of design, implementation and testing of the platform.
+As we mentioned in Chapter 1, the goal of this thesis was to develop an
+interface for reinforcement learning research in StarCraft. The following
+sections outline the process of design, implementation and testing of the
+platform.
 
 \section{Specifications}
 
 Obtaining a list of specifications for the platform was relatively challenging
-for a few reasons: the design needed to provide a powerful environment while
-maintaining a strong degree of expandability. With the sudden re-popularisation
-of reinforcement learning the community has begun challenging previously
-untouched problems, meaning that entirely new architectures might soon appear
-and provide new constraints for existing platforms.
+for a few reasons: the design needed to provide a powerful and robust
+environment while maintaining a strong degree of expandability. With the sudden
+re-popularisation of reinforcement learning the community has begun challenging
+previously untouched problems, meaning that entirely new architectures might
+soon appear and provide new constraints for existing platforms.
 
 We identified the following minimal requirements:
 
@@ -23,51 +24,52 @@ We identified the following minimal requirements:
 \item Ability to control the game from the player perspective
 \item Ability to collect data from human players and replays available over the
   internet.
-\item Ability to use hacks and / or some of the cheats the deactivate some of the
-  features that make the general game particularly hard (say, fog of war). 
+\item Ability to use hacks and / or some of the cheats to deactivate some of the
+  features that make the general game particularly hard (e.g. fog of war).
 \end{itemize}
 
-Additionally, because of the surge of deep reinforcement learning we placed the
-ability to use one or some of the currently popular deep learning libraries on
-top of the requirements list.
-
-% Overall design
+Additionally the surge of deep reinforcement learning gave us an important
+additional requrement: we would need to provide a way to use one or some of the
+currently popular deep learning libraries, and a native interface to the visual
+output of the game.
 
 \section{Brood War Application Program Interface}
 
-One of the main reasons this project became possible within the time constraint
-was because of the existence of the Brood War Application Program Interface
-(BWAPI). A closed-source game like StarCraft would normally be very hard to
-control and to use as a learning platform, but thanks to a few extraordinary
-developers it has been possible to build bots for game. BWAPI is a framework
-written in C++ that provides a clean and modular interface to gain access to the
+One of the main reasons this project became possible within the given time
+constraint was because of the existence of the Brood War Application Program
+Interface (BWAPI). A closed-source game like StarCraft would normally be very
+hard to control and to use as an AI development framework, but thanks to a few
+extraordinary developers since 2009 it has been possible to build bots for the
+game. BWAPI provides a clean and modular interface that provides access to the
 game data structures, allowing to collect game information and to control units
-much in the same way a human player would.
+much in the same way a human player would. Because of its C++ implementation,
+it's also optimised for speed, however its design model makes it unfortunately
+thread-unsafe.
 
 BWAPI uses DLL injection to interact with the game, providing two interfaces to
 the game: BWAPIModule and BWAPIClient. The first one allows to control of the
-units through callbacks fired 
-% (?????) 
-by in-game events, so it's mostly suitable
-for running agents that do not require to have complete control of the game (as
+units through callbacks fired by in-game events, so it's mostly suitable for
+running agents that do not require to have complete control over the game (as
 the game is configured centrally by the injected BWAPI.dll at startup). The
 second interface allows to directly connect and interact with the server started
 within BWAPI.dll, which gives the ability to arbitrarily control most of the
-process state.
-Even thought BWAPIClient lacked some documentation, we decided to use it to give
-us the maximum amount of maneuverability later in the implementation phase.
+process state. Even thought BWAPIClient lacked some documentation, we decided to
+use it to give us the maximum amount of maneuverability later in the
+implementation phase.
 
 \section{Pipeline Design} % 2 pages ()
 
-StarCraft and BWAPI by default are only supported on Windows platforms, but most
-of the critical machine learning and tensor libraries are actively developed
-only on Unix systems. While the situation has gradually seen some improvements
-with the introduction of ... and ..., most of the current state-of-the-art
-development and research happens on Torch, Theano and Caffe, most of which are
-widely supported only on Linux and OS X. Given these constraints we decided to
-separate our development in two macro-systems, one running on Windows and
-directly communicating with StarCraft and the other running on Linux and
-interfacing with Torch.
+StarCraft and BWAPI by default are only supported on Windows platforms (We
+tested Windows 7, 8 and 10), but most of the critical machine learning and
+tensor libraries are actively developed only on Unix systems. While the
+situation has gradually seen some improvements with the introduction of CNTK
+\citep{dallycntk} and TensorFlow \cite{abaditensorflow} (available on Windows
+through Docker), most of the current state-of-the-art development and research
+happens on Torch, Theano and Caffe, most of which are widely supported only on
+Linux and OS X. Given these constraints we decided to separate our system in two
+parts: one running on Windows and directly communicating with StarCraft, and the
+other running on Linux and interfacing with one of the mentioned tensor
+libraries.
 
 \begin{figure}[h]
     \centering
@@ -79,41 +81,45 @@ interfacing with Torch.
     \label{fig:arch_ov}
 \end{figure}
 
-The two separate systems communicate between each other using non-blocking
-sockets in a synchronous or asynchronous fashion depending on how the interface
-is configured. The choice is dependent mostly on the experimental design:
+We designed the systems to communicate between each other using non-blocking TCP
+sockets in a synchronous or asynchronous fashion depending on the interface-wide
+configuration settings. The choice is dependent mostly on the targeted
+experimental setting:
 
 \begin{itemize}
-\item synchronous communication to simulate the standard MDP-like setting where
-  at each step all agents receive the entirety of all observable data, the
-  environment is blocked until the decision process has finished and the
-  environment executes a step when the MDP processes send a certain command. 
-\item asynchronous communication to have a closer simulation to real-world
-  scenarios and games. In this mode the game executes each step at a fixed rate
-  and sends information as fast as possible (as the game steps rate can be much
-  faster than it's currently possible to process and send the visual data). The
-  agent can then send actions at any point of the process, which are then
-  executed in the next immediate step.
+\item synchronous communication can be used to simulate the standard MDP-like
+  setting where at each step all agents receive the entirety of all observable
+  data, the environment is blocked until the decision process has finished, and
+  the environment executes a step when the MDP processes send a certain command.
+\item asynchronous communication is instead more useful to have a closer
+  simulation to real-world scenarios and games. In this mode the game executes
+  each step at a fixed rate and sends information as fast as possible (as the
+  game steps rate can be much faster than it's currently possible to process and
+  send the visual data). The agent can then send actions at any point of the
+  process, which are then executed in the next immediate step.
+  This mode is significantly more challenging.
 \end{itemize}
 
 To be as efficient and fast as possible, the data structures containing the game
-data are serialised using the Google protobuf library \citep{varda2008protocol}.
-The library provides a way to generate serialised objects using pre-defined
-schemas, which can then be filled with game information and sent over as
-compressed strings. Unfortunately the library is not optimised for very large
-objects, so we in addition implemented our own serialisation method for
-sending the image structure over the socket connection.
+information are serialised using the Google protobuf library
+\citep{varda2008protocol}. The library provides a way to generate serialised
+objects using pre-defined schemas, which can then be filled with game
+information and sent over as compressed strings. Unfortunately the library is
+not optimised for very large objects, so in addition to it we implemented our
+own serialisation method for sending the image structure over the socket
+interface.
 
-While both systems works, the asynchronous interface requires a significant
-amount of work on the agent side to sync the data sources and take into account
-the perception/action delay. Such processes are generally considered a source of
-research problems, but they are not of great interest to decision making, as
-once the system is modelled it just becomes part of the environment.
+While both systems are fully functional, the asynchronous interface requires a
+significant amount of work on the agent side to sync the data sources and take
+into account the perception/action delay. Such processes are generally
+considered a source of research problems but they are not of great interest to
+decision making, as once the system is modelled it just becomes part of the
+environment.
 
-For the sake of clarity and brevity we will from now on describe the rest of the
-system only with respect to the synchronous communication, as the implementation
-of the rest of the modules is mostly independent from this choice and it greatly
-simplifies the agent interface.
+For the sake of clarity and brevity we will therefore from now on describe the
+rest of the system only with respect to the synchronous communication system, as
+the implementation of the rest of the modules is mostly independent from this
+choice and it greatly simplifies the explanation of the agent interface.
 
 \subsection{Windows Interface}
 
@@ -124,32 +130,48 @@ simplifies the agent interface.
     \label{fig:arch_win}
 \end{figure}
 
-Implemented in C++
-
-Automatically starts the game and injects BWAPI.ddl using ddlinjector. 
+To avoid any compatibility problems and to be as fast as possible, we
+implemented this side of the architecture in C++ using Windows' Visual C++
+compiler. The interface, called \texttt{Brood War Learning Environment} (BWLE)
+automatically starts the game, injects \texttt{BWAPI.ddl} and tries to connect
+to one of the servers specified in the configuration file(s).
 
 \subsubsection{StarCraft Controller}
-
-BWAPI configuration is parsed and edited according to variables specified in the
-client configuration system. The idea is to completely hide BWAPI and present a
-unique and coherent configuration system with useful defaults.
-
-A list of maps can be load in the system by specifying a file to be parsed. The
-game can then be set to load maps sequentially or in random order, which is an
-essential feature for standard training procedures.
 
 Games can be interrupted, terminated or restarted at any time. The client allows
 to either completely kill StarCraft, therefore resetting its state with a
 process-wide restart, or to just use the in-game restart function to quit the
 game and start a new one. The first method allows to change certain settings
-that can be loaded only when StarCraft is started, but it's significantly
-slower, as it takes around two seconds on a quad-core machine from issuing the
-kill command and the first step of a new game. The second method takes around a
-second to start another game. % CITATION NEEDED (check starcraft times)
+that can be loaded only when StarCraft is started, but stops BWAPI for around
+two seconds on a quad-core machine between issuing the kill command and the
+first step of a new game. The second method allows instead to start a new game
+in less than a second. % CITATION NEEDED (check starcraft times)
+
+\begin{sflisting}[caption=Example of a BWLE's configuration file. Fields are not
+  mandatory and have reasonable default values. Most of the available options
+  are not shown., label=ls:config] 
+[standard]
+port=12312
+address=192.168.0.1
+with_image=true
+image_skip=0
+reward_mode=0
+turn_skip=10
+map_file=..\share\maps_test_up.txt
+map_mode=random
+\end{sflisting}
+
+BWLE's configuration system has been written to parse standard INI files,
+focusing on completely hiding BWAPI and presenting a unique and coherent
+configuration system with useful defaults. A list of maps can then be load in
+the system by specifying a file containing a list of files or directories. The
+game can also be set to load maps sequentially or in random order, which is an
+essential feature for standard training procedures. All the random processes
+within BWAPI and the interface can be controlled by specifying a seed at the
+start of the experiment. An example configuration can be seen in Listing
+\ref{ls:config}.
 
 % TODO: add seed to game if possible, otherwise future work
-
-% insert example files here 
 
 \subsubsection{Screen capturing}
 
@@ -158,9 +180,15 @@ second to start another game. % CITATION NEEDED (check starcraft times)
 BWAPI does not provide any interface to capture the visual output of the
 game\footnote{Some work had been previously done to integrate some form of
   streaming functionality within BWAPI, but it was dropped in favour of existing
-  tools. See https://github.com/bwapi/bwapi/issues/596}. To fulfill the
-specifications we developed a module to capture the StarCraft window and include
+  tools. See https://github.com/bwapi/bwapi/issues/596}, so to fulfill the
+specification we developed a module to capture the StarCraft window and include
 it in the game state.
+
+To achieve this functionality we use the Graphics Device Interface library
+Gdiplus - included as part of the standard Windows Software Development Kit - to
+find the StarCraft process, grab an handler to its window, and extract the raw
+pixel data. The obtained data structure stores the pixel in an array of 32bit
+integers, where integer represent the row-wise RGB data and a null byte.
 
 \begin{figure}[h]
     \centering
@@ -171,80 +199,108 @@ it in the game state.
     \label{fig:capt_conv}
 \end{figure}
 
-To achieve this functionality we used the Graphics Device Interface library
-Gdiplus, included as part of the standard Windows API, to find the StarCraft
-process, grab its window's handler and extract the raw pixel data. The obtained
-data structure stores the pixel in an array of 32bit integers, where integer
-represent the row-wise RGB data and a null byte. 
-
 Before serialising the data to use the network endianness order over the wire,
-we strip the null byte and we cluster the channels separately as to obtain first
+we strip the null byte and we cluster the channels separately to obtain first
 all the red channel values, then the gree channel values, and finally the blue
 channel values (Figure \ref{fig:capt_conv}). It must be noted that while this
 process has been made as fast as possible on the single thread (given the frame
-size), it could be even further optimised by using the fact that the channels
-are essentially already independent and therefore using a standard parallel loop
-and some pointer map to shift the array around.
+size), it could be even further optimised by exploiting the fact that the
+channels are essentially already independent. 
+
+To allow BWLE to modify the size of the window at running-time we stored all the
+captured data using dynamic-size arrays. This required us to add information
+such as windows size and bit-dept to the game state data structure so that the
+server would be able to calculate the image buffer without making mistakes and
+corrupting the data.
 
 % TODO describe image serialisation
 
 \subsubsection{Collecting the Game State}
 
-Collecting the game state represented a non-trivial design and implementation
-challenge. BWAPI is designed with in mind the process of writing classical AI
-bots, which usually does not include getting access to the entirety of the game
-data structures. This means that the interface is modular and divided with
-respect to unit classes, weapons, available upgrades, events, forces and so on.
-Collecting the game state in a straightforward manner means therefore querying
-most of the internal interface, filtering out errors and unneeded information,
-and finally clustering everything to fit our shared data structures. 
+Collecting the game state also represented a non-trivial design and
+implementation challenge. BWAPI was designed with the idea of writing classical
+AI bots, not general learning systems. This essentially meant having to deal
+with a purposely modular interface split into different objects with respect to
+unit classes, weapons, available upgrades, events, forces and so on. The process
+of developing a module to collect the game state in a straightforward manner
+ended up consisting into many hours of development and testing to learn most of
+BWAPI's large functionality. The final outcome was a modifiable query class
+\texttt{StateManager} that walks most of the available internal interface while
+filtering out errors and unneeded information. Once the module has obtained the
+game state, the entirety of the data is loaded into a protobuffer so that it can
+be sent over the wire and parsed by the server running on the Linux end.
+\texttt{StateManager} is written in such a way that adding units or information
+to the unit data structure can be easily achieved by adding entries to the proto
+file (which specifies the schema to use to build the C++ interface) and
+modifying \texttt{StateManager::setGameState\_} to include the new information
+into the protobuffer.
 
-\begin{algorithm}[H]
-\SetAlgoLined
-\KwResult{Write here the result }
- initialization\;
- \While{While condition}{
-  instructions\;
-  \eIf{condition}{
-   instructions1\;
-   instructions2\;
-   }{
-   instructions3\;
-  }
- }
- \caption{How to write algorithms}
- \label{alg:state}
-\end{algorithm}
+We shaped the design of the module to be purposely centered around the unit data
+structure because most of the information available to players is effectively
+coupled to the visible units. Everything else can be either inferred or learnt
+by playing the game. We have for instance purposely excluded available
+information about players, races, and upgrades because they didn't provide any
+particularly useful information for our experiments, however it wouldn't take a
+huge amount of additional work to identify other useful types of data that
+should be included by default in the platform. Part of the \texttt{proto}
+specification file can be seen in Listing \ref{ls:proto}
 
-To do so we developed a module called \texttt{StateManager} to take the burden
-of doing all the necessary operations. Algorithm \ref{alg:state} gives an
-overview of the process. Once the state is collected, the module serialises it
-and sends it over with the previously collected image. As described in the
-section introduction, we use a protobuffer so that it can be sent over the wire
-and parsed by the server running on the Linux end. \texttt{StateManager} is
-written in such a way that adding units or information to the unit data
-structure can be easily achieved by adding entries to the proto file (which
-specifies the schema to use to build the C++ interface) and modifying
-\texttt{StateManager::setGameState\_} to include the new information into the
-protobuffer.
+\begin{mehlisting}[caption=Protobuffer schema used to generate the interface used
+  to serialise and de-serialise StarCrat's game state., label=ls:proto] 
+syntax = "proto2";
 
-The design was chosen to be purposely centered around the unit data structure
-because most of the information available to players is effectively coupled to
-the visible units. Everything else can be either inferred or learnt by playing
-the game. We have for instance purposely excluded available information about
-players, races, and upgrades because they didn't provide any particularly useful
-information, however it wouldn't take a huge amount of additional work to
-identify other useful types of data that should be included by default in the
-platform.
-
+enum ActionType {
+  ... // The list of action is dependent on the experiment. 
+}
+enum UnitType {
+  ... // Classes of units also dependent on the experiment.
+}
+message Action {
+  required int32 id = 1;
+  repeated ActionType action = 2;
+}
+message Position {
+  required int32 x = 1;
+  required int32 y = 2;
+}
+message UnitState {
+  required int32 id = 1;
+  optional UnitType type = 2;
+  optional Position pos = 3;
+  optional int32 hp = 4;
+  optional bool is_allied = 5;
+}
+message GameState {
+  required bool is_terminal = 1;
+  optional int32 last_reward = 2;
+  repeated UnitState units = 3;
+}
+message ImageState {
+  required int32 width = 1;
+  required int32 height = 2;
+  required int32 depth = 3;
+}
+message ClientPacket {
+  required int64 timestamp = 1;
+  required bool has_image = 2;
+  optional ImageState image_state = 3;
+  optional GameState game_state = 4;
+}
+message ServerPacket {
+  optional int64 timestamp = 1;
+  optional bool is_training = 2;
+  optional bool terminate = 3;
+  repeated Action actions = 4; 
+}
+\end{mehlisting}
 
 \subsubsection{Controlling units}
 
 To centralise the control of units we designed and implemented another manager
-module, called \texttt{AgentManager}. Every time a ServerPacket received, the
+module, called \texttt{AgentManager}. Every time a ServerPacket is received the
 module extracts the action identifier, the unit associated to the action and any
-parameters coupled to it. To allow for unit-less actions, we allowed the
-controlled player to correspond to a negative id (usually -1).
+parameters coupled to it. To allow for non-unit kind of actions, we allowed the
+controlled player to correspond to a negative id (-1 by default).
 % TODO add parameters to action
 
 One of the main issues of building agents for StarCraft (and most of RTS games)
@@ -257,63 +313,80 @@ For instance:
 \item without workers, a \texttt{mine target} action is completely invalid and
   cannot be executed. That is also the case when workers are present but the
   target is a unit or a building (in which case the action becomes most of the
-  times ``attack'').
+  times \texttt{attack target}).
 \item buildings (and some units) have different upgrades or sometimes no
   available upgrades at all, so a \texttt{upgrade to id} action can have a wide
   variety of effects.
 \end{itemize} 
 
-We couldn't find a way to quickly tackle the problem within the project
-time frame, so we created a few different types of actions based on some
-particular scenarios, making sure to designing them to be as general and
+We couldn't find a way to quickly tackle the problem within the project's scope
+and time limitation, so we created a few different types of actions based on
+some particular scenarios, making sure to designing them to be as general and
 reusable as possible. We ended up with three classes of actions:
 
 \begin{description}
 \item [Player Actions] - Those actions mostly include game-wide primitives such
   as \texttt{move screen [up|down|left|right]}, and mouse controls such as
   \texttt{click [left|right][pos]} and \texttt{select [area]}.
-\item [Basic Unit Actions] - TODO
-\item [Complex Unit Actions] - TODO
+\item [Basic Unit Actions] - Modelled after GridWorld's actions, those allow the
+  agent to move units around the map by specifying either points or vectors.
+\item [Complex Unit Actions] - A lot of StarCraft's micro-management can often
+  be automatized through interacting with the correct objects in the
+  environment. For instance, when a worker is sent to mine it won't be necessary
+  to order it to mine close resource areas because the game will automatically
+  search for them once the first job is done. Those actions are clearly more
+  abstract than basic unit actions, so we felt we needed to include them in a
+  separate category. Examples of such implemented actions are in fact
+  \texttt{gather closest resource}, and \texttt{attack closest unit}.
 \end{description}
 
-The \texttt{Player} module then takes the previously collected \texttt{UnitSet}s
-and orders the matching units some particular action.
-
-Our implementation also allows to reuse the specified primitive actions by sending
-multiple action ids within the packet. 
+To execute some actions the \texttt{Player} module needs the respective action
+id and the id of one of the controllable units. Our implementation also allows
+to reuse the specified primitive actions by sending multiple action ids within
+the packet.
 % implemented also into the agents code
 % on linux!
 Care was taken to make sure that the system was robust enough to ignore killed
-or blocked units during the action steps.
+or blocked units during the action steps. 
 
-As a consequence any created unit during this timeframed is ignored.
+Finally, we can control StarCraft at more than 10Hz, but the game has problems
+when the rate of actions-per-minute (APM) is too high, as the game was designed
+to handle a maximum of a couple of hundreds APMs. To be able to vary our APM
+rate we created a buffer of actions that the agent can use to repeat sent
+commands for a fixed number of steps. The number was fixed to simplify the
+overall implementation.
+
+% TODO Maybe put a graph?
 
 \subsubsection{Generating Rewards}
 
-Designing reward functions in RTS games like StarCraft is another problem that
-has many possible but inter-incomparable solutions, making it problematic to
-find a generic reward function that covers all possible scenarios. In
-particular, when we inspect games played by human players we can imperically
-observe that the ideal reward function might also need to be somehow engineered
-to be hierarchically structured, as the ``goodness'' of a state-action pair is
-often entirely context dependent and changes depending on whether it's being
-estimated over a local micro-scenario or the entire game. Let's look at the
+Designing the reward scheme of RTS games like StarCraft was another problem that
+offered many possible but inter-incomparable (and partial) solutions, making it
+problematic to find a generic reward function to cover for all possible in-game
+RL sub-problems. When we inspect games played by human players we can
+imperically observe that the ideal reward function might in particular need to
+be somehow engineered to be hierarchically structured, as the ``goodness'' of a
+state-action pair is often entirely context dependent and changes with respect
+to a variety of in-game variables. In general this problem is very noticeable
+when we look at micro-actions versus strategical moves. Let's look at the
 structure of a common competitive game between two players.
 
 It is a widely recognised fact that most board and computer games can be divided
 in three major phases, each usually possessing an almost completely isolated
-meta-game from the others. Those phases are often called early-game, mid-game
-and end-game. In StarCraft, the early game is by design forcefully dominated by
-a combination of exploration, resource-gathering and build-order optimisation.
-The mid-game is the most variable of the three, and includes making strategic
-and tactical decisions to optimise (and protect) a chosen build-order with
-respect to a roughly constant resource income income rate. This phase of the
-game significantly changes depending on the strategy of both players and the map
-topology. Finally, the end-game is the last phase of the game and mostly
-consists in the winning player successfully carrying their final part of the
-strategy, or the losing player making a comeback thanks to either errors of the
-opponent or moves that are carefully-thought but often containing some amount of
-``gambling''.
+meta-game from the others \citep{liquipediastrat}. Those phases are often called
+early-game, mid-game and end-game. In StarCraft, the early game is by design
+forcefully dominated by a combination of exploration, resource-gathering and
+build-order optimisation. The mid-game is the most variable of the three, and
+includes making strategic and tactical decisions to optimise (and protect) a
+chosen build-order with respect to a roughly constant resource income rate. This
+phase of the game significantly changes depending on the strategy of both
+players and the map topology. Finally, the end-game is the last phase of the
+game and mostly consists in either the winning player successfully carrying
+their final part of the strategy, or the losing player making a comeback thanks
+to either errors of the opponent. Similarly to other games and many popular
+board games, end-game moves are often carefully-thought and executed, and often
+contain some amount of ``gambling'' or decision-making under extreme
+uncertainty.
 
 In reality it can also be observed that professional StarCraft players behave
 similarly to chess and go players, where the meta-game tends to rely on
@@ -323,23 +396,23 @@ sequence of actions becomes so close to be optimal (considering human
 limitations) that the game effectively is won by which strategy is strong
 against the other (in a rock-paper-scissors fashion).
 
-All of those factors contribute to complicate the design of a general purpose
+All of those factors contribute in complicating the design of a general purpose
 reward system, especially if the final goal is to be able to play good games
 against both amateur and professional players. Some research has explored
 learning the reward function using techniques like Inverse Reinforcement
-Learning\citep{ng2000algorithms}, but none of the explored domains are even
-remotely comparable to StarCraft's extremely large state space.
+Learning\citep{ng2000algorithms}, but none of the explored domains possess state
+spaces even remotely comparable StarCraft's.
 
 % TODO Put example image here
 
-To get around the problem we designed a simple module called
-\texttt{RewardManager}, whose goal mostly consists in analysing the current
-state (or a history of the states) and providing a numerical reward. Depending
-on the configuration the module can also output a array of values for each unit,
+To get around the problem we designed a bare-bone module called
+\texttt{RewardManager} whose goal mostly consists in analysing the current state
+(or a history of the states) and providing a numerical reward. Depending on the
+configuration the module can also output a array of values for each unit,
 providing support for multi-agent settings or some hierarchical reinforcement
 learning methods such as Q-decomposition \citep{russell2003q}. Once the reward
 is calculated it's then taken by the \texttt{StateManager} to be inserted into
-the protobuffer and sent over.
+the protobuffer and sent over to the agent.
 
 % TODO add that more work is needed
 
