@@ -553,11 +553,13 @@ The final accessible version of the interface to the agents ended up containing
 a rich interface. Some important functions are for instance:
 
 \begin{description}
-\item [send\_packet(void)] -
-\item [gen\_packet(bool, bool)] -
+\item [send\_packet(void)] - Sends the \texttt{ServerPacket} package to the
+  client, allowing to control the execution of the environment.
 \item [add\_action(int, int*)] - Takes a unit id and an array of action ids and
   adds it to the list of actions.
-\item [get\_image\_tensor(void)] - Returns the last stored 
+\item [get\_image\_tensor(void)] - Returns the last received image as a
+  \texttt{DoubleTensor}. The tensor has been constructed in such a way to be
+  directly compatible with the standard Torch \texttt{image} library. 
 \item [get\_state(void)] - Return the game state as a hierarchical Lua table
   that the agent can walk through by simple recursive exploration of the
   attached dictionary of keys. The \texttt{inspect} library is used to test the
