@@ -1,34 +1,25 @@
 \chapter{Results}
 
-% analytical results
-% * CPU tests for week run
-% * Memory usage
-% * speed comparisons w/ modes
-
 \section{Stress Tests}
 
 When we started developing BWLE we were aware of experiments running on ALE
 spawning entire days \citep{mnih2015human}. Because of the huge amount of steps
 steps required to learning policies based on some deep architecture, we decided
-it was worth run a few stress-tests. We ran two experiments on the development
-machine that lasting 5 days each.
-
-The first experiment consisted in having a basic agent send random actions to
-one unit for 5 million steps. We used the synchronous communication system and
-fixed the observation-action rate per minute to 600 (10 Hz), ordering the client
-to restart the game every 10000 iterations. The map consisted in an empty plane
-with one unkillable controllable unit and one unkillable aggressive enemy unit
-(as to force the game to do at least some planning all the time). The second
-experiment followed the same procedure but stressed the game and BWAPI a bit
-more heavily by including into the game an unusual number of in-game event
-triggers and 100 units (split into 50 allied and 50 enemy units).
+it was worth run a few stress-tests. The experiment consisted in having a basic
+agent send random actions to many units for 5 million steps. We used the
+synchronous communication system and fixed the observation-action rate per
+minute to 600 (10 Hz), ordering the client to restart the game every 10000
+iterations. The map consisted in an empty plane with a few unkillable
+controllable units and the same amount of unkillable aggressive enemy unit (as
+to force the game to do at least some planning all the time).
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{ch5/cpu_test_re}
     \caption{CPU usage of BWLE with respect to the Windows client and the Linux
       server. All the usage and was synchronously recorded every 10 steps. The
-      memory usage closely follows the CPU usage.}
+      memory usage is not shown because it completely overlaps with the CPU
+      usage.}
     \label{fig:fst_usage}
 \end{figure}
 
@@ -36,14 +27,12 @@ The recorded usage (Figure \ref{fig:fst_usage}) shows a completely stable system
 that can deal with both simple and complex maps using relatively few
 computational resources. We did not achieve 100\% of branch coverage because we
 didn't allow the usage of all the available actions, but the majority of the
-client available interface was called at least once (according to Visual Studio
-2013, 90\% of branch coverage was reached).
+client available interface was called at least once (in particular, according to
+Visual Studio 2013 90\% of branch coverage was reached).
 
-% TODO ADD NETWORK STATS
-
-It must also be noted that most StarCraft AI tournaments \citep{...} run
-BWAPI-based clients for entire weeks without any noticeable problem, so the
-results we obtained were not unexpected.
+It must also be noted that most StarCraft AI tournaments
+\citep{ontanon2013survey} run BWAPI-based clients for entire weeks without any
+noticeable problem, so the results we obtained were not unexpected.
 
 \section{Navigation Task}
 
