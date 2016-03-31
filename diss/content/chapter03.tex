@@ -29,7 +29,7 @@ We identified the following minimal requirements:
 \end{itemize}
 
 Additionally the surge of deep reinforcement learning gave us an important
-additional requrement: we would need to provide a way to use one or some of the
+additional requirement: we would need to provide a way to use one or some of the
 currently popular deep learning libraries, and a native interface to the visual
 output of the game.
 
@@ -37,14 +37,14 @@ output of the game.
 
 One of the main reasons this project became possible within the given time
 constraint was because of the existence of the Brood War Application Program
-Interface (BWAPI). A closed-source game like StarCraft would normally be very
-hard to control and to use as an AI development framework, but thanks to a few
-extraordinary developers since 2009 it has been possible to build bots for the
-game. BWAPI provides a clean and modular interface that provides access to the
-game data structures, allowing to collect game information and to control units
-much in the same way a human player would. Because of its C++ implementation,
-it's also optimised for speed, however its design model makes it unfortunately
-thread-unsafe.
+Interface (BWAPI) \citep{bwapi2011brood}. A closed-source game like StarCraft
+would normally be very hard to control and to use as an AI development
+framework, but thanks to a few extraordinary developers since 2009 it has been
+possible to build bots for the game. BWAPI provides a clean and modular
+interface that provides access to the game data structures, allowing to collect
+game information and to control units much in the same way a human player would.
+Because of its C++ implementation, it's also optimised for speed, however its
+design model makes it unfortunately thread-unsafe.
 
 BWAPI uses DLL injection to interact with the game, providing two interfaces to
 the game: BWAPIModule and BWAPIClient. The first one allows to control of the

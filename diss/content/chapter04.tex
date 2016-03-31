@@ -193,13 +193,14 @@ compress the state in some way.
 \end{figure}
 
 We chose to approximate the state by discretise a potential function
-\citep{diebelthrun} based on the health points of in-game units relative to a
-particular selected allied unit (Figure \ref{fig:discrete_state}). This was
-achieved by taking a particular unit as reference, filtering out everything
-lying outside of the visible pixel radius, splitting then the obtained space
-into a variable amount of slices. The value of each slice was then calculated by
-obtaining the sum of all health ``value'' assigned to each unit within a space.
-Given slice $p$ and $U_p$ units, the slice value $SV(p)$ is computed as
+\citep{thrun2005probabilistic} based on the health points of in-game units
+relative to a particular selected allied unit (Figure \ref{fig:discrete_state}).
+This was achieved by taking a particular unit as reference, filtering out
+everything lying outside of the visible pixel radius, splitting then the
+obtained space into a variable amount of slices. The value of each slice was
+then calculated by obtaining the sum of all health ``value'' assigned to each
+unit within a space. Given slice $p$ and $U_p$ units, the slice value $SV(p)$ is
+computed as
 
 \begin{equation}
   \begin{aligned}
@@ -342,4 +343,10 @@ making the behaviour of allied units somewhat correlated with the agent policy.
 
 \section{Hardware Setup}
 
-TODO.
+All our development was carried out on a Ubuntu workstation equipped with a
+Intel i7-4790K CPU, 16GB of RAM, an NVIDIA GTX970, and 250GB of solid state
+storage disk. Half of the cores and memory was assigned to a Windows 7 virtual
+machine, making it possible to develop the entire pipeline on one machine. The
+evaluation of the platform was done using the previously mentioned virtual
+machine and a Dell Server equipped with a 64-cores Intel Xeon E5-2698 CPU (of
+which we used only 8) and an NVIDIA GTX980Ti.

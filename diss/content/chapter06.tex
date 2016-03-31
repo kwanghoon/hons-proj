@@ -101,10 +101,17 @@ both unit actions and screen/environment actions.
 In Chapter 2 we have discussed some work in Hierarchical Reinforcement Learning
 that could be used in principle to tackle StarCraft, however no particular model
 seems to fit all the requirements of the platform, especially if we take and
-end-to-end approach to the problem. It's probably fair to speculate that
-similarly to AlphaGo, a reinforcement learning framework will need some amount
-of strong supervision to learn good overall strategies and hand-tuned feature
-extractors.
+end-to-end approach to the problem. A possible approach would be to construct a
+partial program using the developer knowledge to guide the design and using
+reinforcement learning to learn the parameters of the sub-plans
+\citep{marthi2005concurrent}.
+
+Very recently DeepMind has released AlphaGo, a system that mixed Monte-Carlo
+Tree Search with Deep Reinforcement Learning \citep{silver2016mastering} to
+successfully beat the current World Champion of Go. It's probably fair to
+speculate that similarlyfd a reinforcement learning framework will need some
+amount of strong supervision and hand-tuned feature extractors to learn good
+overall tactics.
 
 % Cover Russell work
 % Cover Policy reuse
@@ -131,8 +138,6 @@ robotics communities has started tackling this problem
   rasmus2014denoising}, but no clear solution has emerged so far. StarCraft
 together with our framework should provide the perfect environment to explore
 those scenarios.
-
-\subsection{Text-Based Expert Knowledge Distillation}
 
 \section{Future Work}
 
@@ -176,8 +181,8 @@ and WINE, a Linux environment that tries to reproduce the Windows API and
 provide tools for running Windows software on unix platforms. Porting the
 entirety of our pipeline over Linux would mean being able to significantly
 simplify the integration with other state-of-the-art machine learning systems
-and remove some of the difficulties in using the platform (as the installation
-can be cumbersome). 
+and remove some of the difficulties in using the platform (as the current
+installation can be cumbersome at times).
 
 
 \subsection{ROS integration}
@@ -199,9 +204,12 @@ simplify the creation of a StarCraft-based simulation environment.
 
 \section{Chapter Summary}
 
-We have discovered that StarCraft is challenging for a large variety of reasons,
-most of which are problems effectively shared with a lot of other RTS games.
-Regardless, we don't believe we would have managed to reach the same results
-using any of the other available RTS platforms had we not had something
-equivalent to BWAPI.
+Over the course of this project we have learnt that StarCraft is a challenging
+domain for a large variety of reasons, most of which consisting of problems
+effectively shared with many other RTS games. The platform has been equipped
+with a solid software framework, and can now be used to study reinforcement
+learning, general machine learning, and mult-agent systems. We would not have
+managed to reach the same results using any of the other available RTS platforms
+had we not had something equivalent to BWAPI, so we believe we made the right
+choice at the start of the project when we decided to focus on StarCraft.
  

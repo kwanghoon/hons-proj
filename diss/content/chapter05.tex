@@ -23,6 +23,24 @@ to force the game to do at least some planning all the time).
     \label{fig:fst_usage}
 \end{figure}
 
+In terms of efficiency, Figure \ref{fig:tree} shows that the client spends the
+majority of the time in idle waiting for action messages from the agent server.
+For an hour we allowed the interface to run as fast as possible, reaching 18
+``iterations per seconds'' when sending the image and 24 when sending only the
+game state.  
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{ch5/client_split}
+    \caption{Output of the Visual Studio 2013 C++ Profiler showing the most used
+      calls in the Windows client. Ignoring the calls made to the stream
+      operators (as we already provide a way to disable all printing from BWLE's
+      configuration), we can see that the client spends most of the time waiting
+      for responses from the server.} 
+    \label{fig:tree}
+\end{figure}
+
+
 The recorded usage (Figure \ref{fig:fst_usage}) shows a completely stable system
 that can deal with both simple and complex maps using relatively few
 computational resources. We did not achieve 100\% of branch coverage because we
@@ -80,8 +98,8 @@ the map's walkable paths average width.
 \end{figure}
 
 Figure \ref{fig:guid_task_results} shows the learning curve similarly to the
-previous experiments. We can see that after a 200000 iterations the reward
-starts to converge. 
+previous experiments. We can see that after around 400000 iterations the total
+reward starts to converge.
 
 \section{Survival Task}
 
@@ -107,24 +125,13 @@ episode gradually increases, which means that learning is happening.
     \label{fig:surv_task_results}
 \end{figure}
 
-If we look at Figure \ref{fig:dif_pol} we can see that the distribution of
-actions taken by each unit differs significantly depending on the amount of
-allied and enemy units. It's interesting to note that there is some difference
-between the policy learnt by the mono-unit agent and the one learnt by the
-multi-unit version in the case when identical states are presented (for instance
-0 allied units), but this is probably due to approximation noise in the
-value network.
-
-% simple tests
-%  message checks
-%  image checks
-%  screen movement policy
-%  grid movement
-% many vs one unit
-
-% multi-unit setting
-% change of action window
-% easy maps vs hard maps
+We inspected the collected action data and we noticed that the distribution of
+actions taken by each unit differed significantly depending on the amount of
+allied and enemy units. This was probably due to the fact that the Convolutional
+Neural Network built filters invariant to the position of the units, making it
+more likely to try and shoot other units when close to allied units. Finally,
+at the end of the training session, the units lasted on average 50 iterations
+more than at before training.
 
 \section{Chapter Summary}
 
