@@ -7,17 +7,17 @@ tackling the entire game as a whole big machine learning problem. In addition to
 implementing those algorithms, we also designed a few automatic tests to check
 the validity of the game state information in known maps.
 
-\section{Test Task}
+\section{Test Tasks}
 
 We have already mentioned a few times how hard StarCraft becomes when posed as a
-machine learning and reinforcement learning problem. \cite{} have shown that a
-standard game of StarCraft has a state of approximately $10^{1000}$, which is an
-incredibly high number even when compared to the large state spaces of Chess
-($10^{50}$ to $10^{120}$ states) and Go ($10^{70}$ to $10^{360}$ states)
-\citep{papadimitriou2003computational}. Because of this we never considered
-tackling the game a part of this project. However, we decided to create a few
-test maps and scenarios to aid debugging and see how reinforcement learning
-agents would perform on a reduced StarCraft domain.
+machine learning and reinforcement learning problem. \cite{ontanon2013survey}
+have shown that a standard game of StarCraft has a state of approximately
+$10^{1000}$, which is an incredibly high number even when compared to the large
+state spaces of Chess ($10^{50}$ to $10^{120}$ states) and Go ($10^{70}$ to
+$10^{360}$ states) \citep{papadimitriou2003computational}. Because of this we
+never considered tackling the game a part of this project. However, we decided
+to create a few test maps and scenarios to aid debugging and see how
+reinforcement learning agents would perform on a reduced StarCraft domain.
 
 \subsection{Navigation Task}
 
@@ -39,8 +39,10 @@ further away from the goal and +1 for getting closer to the goal. Reaching the
 goal would give 100 of reward and would terminate the trial. You can see some of
 those maps in Figure \ref{fig:nav_task}. We disabled \texttt{moveScreen*}
 actions for both agents as we made the map small enough for all the relevant
-information to be available. The Q-learning agent had access to the goal
-position.
+information to be available. The Q-learning agent had access to the controlled
+unit position and the goal position. Instead of using pixel-positions, we split
+the plane in a 25 by 25 grid and provided all positions with respect to the
+new grid. 
 
 \subsection{Guided Navigation Task}
 
@@ -59,8 +61,7 @@ while DQN had 20 maps to learn how to avoid danger maps. To guide the agent
 visually we added a thick red border in the direction of the goal and we
 assigned a different terrain pattern to the danger-zones. This time the map was
 too large to cover the screen, so we locked the window to keep the unit always
-at the center of the window. Figure \ref{fig:guid_task} shows an example of one
-of those maps.
+at its center. Figure \ref{fig:guid_task} shows an example of one of those maps.
 
 \subsection{Survival Task}
 
@@ -250,12 +251,12 @@ Q-learning update (Equation \ref{eq:ql}) as the loss function.
 
 % TODO maybe put algorithm in here
 
-Similarly to \cite{mnih_et_al}, our algorithms records all the tuples containing
-the experience of the agent, keeps track of the newest ones using a circular
-buffer, and samples from the buffer whenever the update step is called. This
-functionality is called \textbf{Experience Replay} and removes the correlation
-in the sequential observations, reducing the forgetting rate in the network. To
-further reduce this correlation, the algorithm calculates the
+Similarly to \cite{mnih2013playing}, our algorithms records all the tuples
+containing the experience of the agent, keeps track of the newest ones using a
+circular buffer, and samples from the buffer whenever the update step is called.
+This functionality is called \textbf{Experience Replay} and removes the
+correlation in the sequential observations, reducing the forgetting rate in the
+network. To further reduce this correlation, the algorithm calculates the
 temporal-difference error using a copy of the Q-network that is saved every now
 and then. Finally in addition we added a maximum cap value to the
 temporal-difference error to reduce big outliers and stop the weights from
