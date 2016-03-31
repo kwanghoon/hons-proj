@@ -43,16 +43,18 @@ some of the fundamental problems in reinforcement learning and general
 artificial intelligence.
 
 \subsection{State exploration as a policy}
-As previously mentioned, with most of the roms used within ALE the visual data
-contains the full state of the game. That is, assuming we have a good
-understanding of the score function, the image given by ALE essentially gives us
-all the information we need to model the most useful action at any given time
-with reasonable results. In Starcraft the visual feedback purely represents the
-state of the game at a specific point in the map - point usually chosen by the
-player through keyboard or mouse actions - and unless the user puts time and
-effort in dynamically exploring the map to update his world knowledge, they
-can't get an idea of the general state of the game a part from looking at the
-extremely compressed minimap (Figure \ref{fig:one_star}).
+In Chapter 2 we mentioned that most of the roms used within ALE provide problems
+in which the visual data contains the full state of the game (or most of it).
+That is, assuming we have a good understanding of the score function, the image
+given by ALE essentially gives us all the information we need to model the most
+useful action at any given time with reasonable results. In StarCraft the visual
+feedback purely represents the state of the game at a specific point in the map
+- point usually chosen by the player through keyboard or mouse actions - and
+unless the user puts time and effort in dynamically exploring the map to update
+his world knowledge, they can't get an idea of the general state of the game.
+The players are given an extremely compressed representation of the state of the
+game through minimap on the bottom left, but that representation only gives a
+general idea of the trend of the game (Figure \ref{fig:one_star}).
 
 \begin{figure}[h]
     \centering
@@ -67,14 +69,14 @@ extremely compressed minimap (Figure \ref{fig:one_star}).
     \label{fig:one_star}
 \end{figure}
 
-Additionally the minimap is also affected by the so-called Fog of War, a feature
-in most RTS games that prevents players from observing the state of locally
-explored but unobserved zones at a specific time. This means that to fully win
-the game the player is forced to continuously explore the state of the game,
-regardless of whether they have a more or less complete notion of the topology
-of the map. In reality, Starcraft allows us to cheat and disable the Fog of War,
-making exploration a one-shot process i.e. once the map is explored it’ll be
-“observable” through the entirety of the match.
+Additionally the minimap is also affected by the so-called \emph{fog of war}, a
+feature in most RTS games that prevents players from observing the state of
+locally explored but unobserved zones at a specific time. This means that to
+gain the victory the player is forced to continuously explore the state of the
+game, regardless of whether they already have a more or less complete notion of
+the topology of the map. In reality, Starcraft allows us to cheat and disable
+the fog, making exploration a one-shot process i.e. once the map is explored
+it’ll be “observable” through the entirety of the match.
 
 \begin{figure}[h]
     \centering
@@ -85,16 +87,16 @@ making exploration a one-shot process i.e. once the map is explored it’ll be
     \label{fig:double_star}
 \end{figure}
 
-Starcraft’s visual feedback by itself (i.e. even without encoded features) is
-therefore essentially non-Markovian in how it represents the state of the game.
-Starcraft players are required to move the window to gain information, and the
-image changes drastically depends on where the window is (Figure
-\ref{fig:double_star}), so unless there is some form of memory to collect the
-game state, we cannot only use the visual data as input. Our conjecture is that
-creating an encoded representation of the entire state of game is by itself an
-unsolved mixed deep learning (representation) and RL problem, as the variance in
-the input is simply too large and it's entirely based on the learnt policy for
-both unit actions and screen/environment actions.
+We can say that StarCraft’s visual feedback by itself (i.e. even without encoded
+features) is therefore essentially non-Markovian. Starcraft players are required
+to move the window to gain information, and the image changes drastically
+depending on where the window is (Figure \ref{fig:double_star}). Unless the
+agent is provided with some form of memory to collect the game state, we cannot
+only use the visual data as input. Our hypothesis is that creating an encoded
+representation of the entire state of game is by itself an unsolved mixed deep
+learning (representation) and RL problem, as the variance in the input is simply
+too large and it's entirely based on the learnt policy for both unit actions and
+screen/environment/player actions.
 
 \subsection{Hierarchical Decision-Making}
 
@@ -104,14 +106,15 @@ seems to fit all the requirements of the platform, especially if we take and
 end-to-end approach to the problem. A possible approach would be to construct a
 partial program using the developer knowledge to guide the design and using
 reinforcement learning to learn the parameters of the sub-plans
-\citep{marthi2005concurrent}.
+\citep{marthi2005concurrent}, working towards slowly replacing all the manually
+engineered parts of the plan by doing options modelling.
 
-Very recently DeepMind has released AlphaGo, a system that mixed Monte-Carlo
-Tree Search with Deep Reinforcement Learning \citep{silver2016mastering} to
+Very recently DeepMind released AlphaGo, a system that mixed Monte-Carlo Tree
+Search with Deep Reinforcement Learning \citep{silver2016mastering} to
 successfully beat the current World Champion of Go. It's probably fair to
-speculate that similarlyfd a reinforcement learning framework will need some
-amount of strong supervision and hand-tuned feature extractors to learn good
-overall tactics.
+speculate that a reinforcement learning framework will need some amount of
+strong supervision with respect to exploring the space and hand-tuned feature
+extractors to learn good overall tactics.
 
 % Cover Russell work
 % Cover Policy reuse
@@ -163,16 +166,16 @@ structure. Here's some ways we could achieve this:
 \end{itemize}
 
 Additionally we would like to replace the protobuf serialisation system with
-some slightly more used systems such as \texttt{Json} or \texttt{XML}. This
-would be helpful to integrate the architecture with web systems and would also
-allow a more easily accessible (and human readable) data representation by
-potentially only losing some speed when parsing the structure.
+some slightly more used serialisation mechanisms such as \texttt{Json} or
+\texttt{XML}. This would be helpful to integrate the architecture with web
+systems and would also allow a more easily accessible (and human readable) data
+representation by potentially only losing some speed when parsing the structure.
 
 \subsection{Full Linux compatibility}
 
 The great majority of AI and machine learning researchers do not use Windows as
-their development environment. Having to use a VM to host the StarCraft client
-and the interface means that there is a higher cost then normal associated with
+their development environment. Having to run a VM to host the StarCraft client
+and the interface means that an unusually high usability cost is associated with
 using the platform (that is, providing a simple installation script or a working
 out-the-box environment is not an immediate process).
 
@@ -182,8 +185,8 @@ provide tools for running Windows software on unix platforms. Porting the
 entirety of our pipeline over Linux would mean being able to significantly
 simplify the integration with other state-of-the-art machine learning systems
 and remove some of the difficulties in using the platform (as the current
-installation can be cumbersome at times).
-
+installation can be cumbersome at times). This is fundamentally our next
+immediate development step.
 
 \subsection{ROS integration}
 
@@ -197,7 +200,7 @@ A wide variety of robotics communities regularly release packages for ROS, and
 while most of them are not directly applicable to the StarCraft domains, it
 would be extremely beneficial to link the platform to research groups work on
 hierarchical planning and reasoning. As ROS is available on both Linux, Windows
-and OSX, it would also allow us to define a unified and distributed networking
+and OS X, it would also allow us to define a unified and distributed networking
 interface based on the publisher-subscriber messaging pattern and greatly
 simplify the creation of a StarCraft-based simulation environment.
 
@@ -210,6 +213,6 @@ effectively shared with many other RTS games. The platform has been equipped
 with a solid software framework, and can now be used to study reinforcement
 learning, general machine learning, and mult-agent systems. We would not have
 managed to reach the same results using any of the other available RTS platforms
-had we not had something equivalent to BWAPI, so we believe we made the right
+had we not got something equivalent to BWAPI, so we believe we made the right
 choice at the start of the project when we decided to focus on StarCraft.
  

@@ -2,16 +2,18 @@
 
 \section{Stress Tests}
 
-When we started developing BWLE we were aware of experiments running on ALE
-spawning entire days \citep{mnih2015human}. Because of the huge amount of steps
-steps required to learning policies based on some deep architecture, we decided
-it was worth run a few stress-tests. The experiment consisted in having a basic
-agent send random actions to many units for 5 million steps. We used the
-synchronous communication system and fixed the observation-action rate per
-minute to 600 (10 Hz), ordering the client to restart the game every 10000
-iterations. The map consisted in an empty plane with a few unkillable
-controllable units and the same amount of unkillable aggressive enemy unit (as
-to force the game to do at least some planning all the time).
+When we started developing BWLE we were already aware that many experiments were
+running on ALE for entire days without stopping \citep{mnih2015human}. Because
+of the huge amount of steps steps required to learning policies based on some
+deep architecture, we decided it was worth run a few stress-tests as well. 
+
+The experiment consisted in having a basic agent send random actions to many
+units for 5 million steps. We used the synchronous communication system and
+fixed the observation-action rate per minute to 600 (10 Hz), ordering the client
+to restart the game every 10000 iterations. The map consisted in an empty plane
+with a few unkillable controllable units and the same amount of unkillable
+aggressive enemy unit (as to force the game to do at least some planning all the
+time).
 
 \begin{figure}[h]
     \centering
@@ -27,7 +29,8 @@ In terms of efficiency, Figure \ref{fig:tree} shows that the client spends the
 majority of the time in idle waiting for action messages from the agent server.
 For an hour we allowed the interface to run as fast as possible, reaching 18
 ``iterations per seconds'' when sending the image and 24 when sending only the
-game state.  
+game state, both of which are reasonable targets (as they are way faster action
+rates than ones used by the average professional StarCraft player).
 
 \begin{figure}[h]
     \centering
@@ -45,12 +48,12 @@ The recorded usage (Figure \ref{fig:fst_usage}) shows a completely stable system
 that can deal with both simple and complex maps using relatively few
 computational resources. We did not achieve 100\% of branch coverage because we
 didn't allow the usage of all the available actions, but the majority of the
-client available interface was called at least once (in particular, according to
-Visual Studio 2013 90\% of branch coverage was reached).
+available client interface got called at least once (according to Visual Studio
+2013 92\% of branch coverage was reached).
 
 It must also be noted that most StarCraft AI tournaments
 \citep{ontanon2013survey} run BWAPI-based clients for entire weeks without any
-noticeable problem, so the results we obtained were not unexpected.
+noticeable problem, so the results we obtained were not completely unexpected.
 
 \section{Navigation Task}
 
@@ -70,25 +73,25 @@ iterations by playing 10 episodes, recording mean and standard deviation.
 \end{figure}
 
 Q-learning was tested with three different learning rates, while DQN was tested
-using the same parameters used in \cite{mnih2015human}. We tried to do a more
-appropriate sweep in the parameters space, but DQN tended to diverge when
-varying too much some of the parameters and it would have taken too much time to
-proceed with additional testing. Changing the action persistence window size
-significantly impacted the learning process, as small windows made movement
-actions too quick for the agent to switch from one block of the grid to the
-other, rendering the task partially observable. We know that while DQN is stable
-for MDPs, states with imperfect information in general require some stochastic
-strategies to reach policies that are close to being optimal
-\citep{heinrich2016deep}.
+with the same parameter configuration employed in \cite{mnih2015human}. We tried
+to do a more appropriate sweep in the parameters space, but DQN tended to
+diverge when varying too much some of the parameters, and it would have taken
+too much time to proceed with additional testing. Changing the action
+persistence window size significantly impacted the learning process, as small
+windows made movement actions too quick for the agent to switch from one block
+of the grid to the other, rendering the task essentially partially observable.
+We know that while DQN is stable for MDPs, states with imperfect information in
+general require some stochastic strategies to reach policies that are close to
+being optimal \citep{heinrich2016deep}.
 
 \section{Guided Navigation Task}
 
 The experimental setting was similar to the previous experiment, beside having a
 different map and reward function. DQN was trained using all the 20 available
-maps, while Q-learning had to learn exclusively one map. This choice was made to
-avoid having to find the correct parameters values, as the map was much larger
-and we couldn't feasibly decrease the resolution of the grid without changing
-the map's walkable paths average width.
+maps, while Q-learning had to learn and perform exclusively on one map. This
+choice was made to avoid having to find the correct parameters values, as the
+map was much larger and we couldn't feasibly decrease the resolution of the grid
+without changing the map's walkable paths average width.
 
 \begin{figure}[h]
     \centering
@@ -99,7 +102,9 @@ the map's walkable paths average width.
 
 Figure \ref{fig:guid_task_results} shows the learning curve similarly to the
 previous experiments. We can see that after around 400000 iterations the total
-reward starts to converge.
+reward starts to converge, and that overall DQN seem to be reaching the optimal
+policy at some point (differently to Q-learning, which seems a bit slower and
+possibly converging to a sub-optimal behaviour).
 
 \section{Survival Task}
 
@@ -137,4 +142,9 @@ more than at before training.
 
 In this chapter we presented the results of the experiments described in Chapter
 4. We confirmed some of our initial hypotheses and tested the platform to its
-limits, providing a baseline for future design and research work.
+limits, providing a baseline for future design and research work. Ideally we
+wanted to also implement a couple of model-based reinforcement learning
+algorithms, because they are usually more suited to partially-observable domains
+and they can potentially learn the hierarchical structure of the StarCraft as
+they play the game. Unfortunately we didn't find the time to properly review the
+topic and choose some algorithms within our time constraints.

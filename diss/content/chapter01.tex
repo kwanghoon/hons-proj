@@ -5,30 +5,32 @@ address, as research has to \emph{at least} account for the complexity and
 breath of behaviour that has been shown in animals and humans. Autonomy can
 sometimes be programmatically engineered, but most of intelligent behaviour
 requires some amount of learning that can only be acquired through direct or
-indirect interaction with the environment. A big part of being ``intelligent''
-has to do with the ability to generalise knowledge and behave reasonably in
-unseen scenarios, which makes formalising and tackling the general problem
-completely unfeasible.
+indirect interaction with the environment. A big part of being intelligent has
+to do with the ability to generalise knowledge and behave reasonably in unseen
+scenarios, which makes formalising and tackling the problem of creating
+``intelligence'' a completely unfeasible idea given the great amount of
+information humans seem to be able to deal with over their lifetime.
 
 \section{Reinforcement Learning}
 
-A technique developed specifically the problem of learning via interaction is
-Reinforcement learning. Reinforcement learning provides a general framework in
-which to learn behaviour in a goal-oriented fashion and without requiring expert
-knowledge or labelled data \citep{Sutton:1998:IRL:551283}. It is framed to be
-functional in non-deterministic environments and even in situations where reward
-is delayed. Because of its foundations on dynamic programming and control
-theory, algorithms framed around the reinforcement learning setting can
-ultimately be analysed using a rich set of powerful mathematical tools
-\citep{puterman1990markov,beard1997galerkin}. Unfortunately those algorithms
-learn relatively good behaviour only when the decision-making problem is
-tractable, that is when the environment is both sufficiently representable and
-observable \citep{kaelbling1996reinforcement}; moreover reinforcement Learning
-algorithms also tend to break down as the state space increases in size and
-dimensions \citep{doya2000reinforcement}. To study and improve those algorithms
-we therefore need testbeds that provide facilities to parametrise the size of
-the state and the general difficulty of the task, while remaining interesting
-enough to provide challenges for evolving state-of-the-art algorithms.
+A technique developed specifically to solve the problem of learning via
+interaction is Reinforcement learning. Reinforcement learning provides a general
+framework in which to learn behaviour in a goal-oriented fashion and without
+requiring expert knowledge or labelled data \citep{Sutton:1998:IRL:551283}. It
+is framed to be functional in non-deterministic environments and even in
+situations where reward is extremely delayed. Because of its foundations on
+dynamic programming and control theory, algorithms framed around the
+reinforcement learning setting can ultimately be analysed using a rich set of
+powerful mathematical tools \citep{puterman1990markov,beard1997galerkin}.
+Unfortunately those algorithms learn relatively good behaviour only when the
+decision-making problem is tractable, that is when the environment is both
+sufficiently representable and observable \citep{kaelbling1996reinforcement};
+moreover reinforcement Learning algorithms also tend to break down as the state
+space increases in size and dimensions \citep{doya2000reinforcement}. To study
+and improve those algorithms we therefore need testbeds that provide facilities
+to parametrise the size of the state and the general difficulty of the task,
+while remaining interesting enough to provide challenges for evolving
+state-of-the-art algorithms.
 
 \section{Games as Virtual Learning Environments}
 
@@ -39,9 +41,7 @@ simple and scalable testbeds to develop and compare algorithms in a systematic
 and rigorous manner. Most of those domains consisted in direct adaptations of
 classical AI problems such as grid worlds and bandit problems, but as research
 started getting past those simple domains the community had to come up with more
-structured and complex environments. However providing a strong justification
-for building solutions for platforms customised and designed to provide
-particular levels of difficulty was never terribly easy.
+structured and complex environments. 
 
 The idea of using games as testing framework for Artificial Intelligence is
 certainly not a new one. Chess, Backgammon, Go and various other board games
@@ -50,13 +50,13 @@ have historically been linked to challenges and advances in AI research
 compare and study the properties of different algorithms
 \citep{silver2009reinforcement, tesauro1995temporal, campbell2002deep}.
 
-Over the past couple of decades the community has gradually been solving or
-fully tackling most of those board games, leaving researchers with fewer
-available platforms and generally too large domains to make gradual
-reinforcement learning research easily achievable. On the other hand, computer
-games have always provided the community a perfect excuse to study search
-algorithms and symbolic solvers because of the need to challenge human players,
-allowing at least part of the community to steadily keep working.
+Over the past couple of decades researchers have gradually started to solve or
+fully tackling most of those board games, leaving themselves and their
+colleagues with fewer available platforms and generally too large domains to
+make gradual reinforcement learning research easily achievable. On the other
+hand, computer games have always provided the community a perfect excuse to
+study search algorithms and symbolic solvers because of the need to challenge
+human players, allowing at least part of the community to steadily keep working.
 
 \begin{figure}[h]
     \centering
@@ -69,14 +69,14 @@ allowing at least part of the community to steadily keep working.
 \end{figure}
 
 Recently other domains such as football \citep{kitano1997robocup}, simulated car
-racing \citep{wymann2013torcs}and a variety of computer games also started
+racing \citep{wymann2013torcs} and a variety of computer games also started
 gaining popularity as suitable platforms for research in decision making. All of
 those share characteristics that make naive reinforcement learning complex to
-engineer and use: they can possess large action or environment state spaces,
-they challenge algorithms by providing only a degree of partial observability,
-or they can often be properly tackled only with the involvement of strong
-long-term strategies (with complexity more suitable for communities working on
-long-term planning).
+engineer and use: they possess large action or environment state spaces, they
+challenge algorithms by providing a degree of partial observability, or they can
+often be properly tackled only with the involvement of strong long-term
+strategies (with complexity more suitable for communities working on long-term
+planning).
 
 \begin{figure}[h]
     \centering
@@ -93,19 +93,20 @@ used to study reinforcement learning algorithms that can learn a variety of
 policies for different games of various complexity. Unfortunately the majority
 of the games contained in this particular platform don't necessarily require
 anything way more complex than reactive policies, which means that studying more
-advanced learning tasks on those games has become quite a forced process.
+advanced learning tasks on those games has recently become quite a forced
+process.
 
 A category of computer games instead more suitable for providing complex
 scenarios for studying RL is the category of Real-Time Strategy (RTS) games.
 This typology of games generally requires some amount of long-term planning
-combined with interactive and generalisable short-term (and reactive) planning,
-with the complexity becoming almost entirely context-dependent, as it is often
-the case in real-life scenarios. Those are particularly challenging to existing
-classical reinforcement learning algorithms because of the often intrinsic
-partial observability, the unusually big action space, and their nature of
-competitive game which makes modelling adversarial processes almost a
-requirement. In this thesis we focus on one of the most popular and still widely
-played RTS games, \emph{StarCraft: Brood War}.
+combined with interactive and generalisable short-term (and reactive)
+decision-making, with the complexity becoming almost entirely context-dependent,
+(as it is often the case in real-life scenarios). Those are particularly
+challenging to existing classical reinforcement learning algorithms because of
+the often intrinsic partial observability, the unusually big action space, and
+their nature of competitive game which makes modelling adversarial processes
+almost a requirement. In this thesis we focus on one of the most popular and
+still widely played RTS games, \emph{StarCraft: Brood War}.
 
 % TODO maybe cite from
 % http://umichrl.pbworks.com/w/page/7597597/Successes%20of%20Reinforcement%20Learning
@@ -117,10 +118,11 @@ transform and use StarCraft as a platform to study reinforcement learning and
 general artificial intelligence. We adopted a scoping approach to deal with the
 engineering problem, with the goal to reach a state where we could successfully
 run state of the art learning algorithms using the game as the environment. This
-led us to the design and develop of a robust and generic framework based on
-StarCraft, to the creation of an interface to Torch, one of the most popular
-available tensor libraries, and finally to port and test a few variations of
-commonly used reinforcement learning and deep reinforcement learning algorithms.
+led us to the design and development of a robust and generic framework based on
+\emph{StarCraft: Brood War}, to the creation of an interface to Torch (one of
+the most popular currently available tensor libraries), and finally to port and
+test a few variations of commonly used reinforcement learning and deep
+reinforcement learning algorithms.
 
 The idea was to prove the feasibility of using StarCraft as a learning platform,
 to release the first version of a useful interface to allow the community to
@@ -136,7 +138,7 @@ research platform. Chapter 3 presents the engineering approach taken and the
 developed architecture, covering the entire pipeline from the game to the agent
 interface. Chapter 4 provides a description of our testing tasks and the design
 and implementation of our reinforcement learning algorithms. Chapter 5 outlines
-results obtained from empirically testing the framework and analyses the
+results obtained from empirically testing the framework and analysing the
 performances of the agents on our task. Finally Chapter 6 gives a critique of
-our work and discusses some possible improvements, delineating some initial and
-likely future work.
+our work and discusses some possible improvements, delineating some future work
+we already started developing.

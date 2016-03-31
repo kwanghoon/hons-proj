@@ -40,7 +40,7 @@ s_t, a_t)
 The observed state $s_t$ is called the \emph{Markov State} and is defined as the
 state that summarises all gained experience up until time $t$. If during a
 particular task all the observations received by the agents are Markov states,
-then the problem is defined \emph{fully observable}, otherwise it's
+then the problem is defined \emph{fully observable}, otherwise it becomes
 \emph{partially observable}. Our work focuses on fully observable problems, but
 we will take partial observability into account towards the final chapters to
 discuss some of the properties of this set of decision tasks. Additionally we
@@ -50,7 +50,7 @@ the agent have finite action and state spaces $A$ and $S$.
 
 In general MDPs define a transition probability distribution $P_a(s, s')$
 describing the probability that the process might move into a new state $s'$
-from state $s$ taking action $a$ (Equation \ref{eq:rl_trans}), and a reward
+from state $s$ by doing an action $a$ (Equation \ref{eq:rl_trans}), and a reward
 function $R_a(s, s')$ that provides the expected reward for such transition
 (Equation \ref{eq:rl_rew}).
 
@@ -110,20 +110,20 @@ from the so-called \emph{curse of dimensionality} \citep{bellman1957dynamic}.
 \subsection{Hierarchical Reinforcement Learning}
 
 A lot of cognitive science literature shows that natural intelligence heavily
-involves of abstracting and using hierarchies when modelling of environmental
+relies on abstracting and using hierarchies when modelling environmental
 information and behaviour \citep{gentner2014mental, byrne1989spatial,
   colunga2005lexicon}. Similarly it has also been shown that planning methods
 can strongly benefit from including some form of hierarchical modelling
-\citep{knoblock1994automatically}. However it so happens that most classical
+\citep{knoblock1994automatically}, however it so happens that most classical
 reinforcement learning algorithms do not naturally offer a way to incorporate
 hierarchies into their pipelines.
 
-Many researchers have tried to experiment with several methods to obtain
+Many researchers have tried to experiment with several methods to obtain working
 hierarchical reinforcement learning models. Contributions have explored with
 changing different parts of the standard reinforcement learning process, but the
-cleanest results have been obtained when focusing on adding temporal
-abstractions. These abstractions have for instance been used to create forms of
-\emph{temporally-extended actions} such as \emph{behaviours}
+cleanest results have been obtained when focusing only on adding temporal
+abstractions to the system. These abstractions have for instance been used to
+create forms of \emph{temporally-extended actions} such as \emph{behaviours}
 \citep{brooks1986achieving}, \emph{skills} \citep{thrun1995finding},
 \emph{options} \citep{sutton1999between}, or \emph{control modes}
 \citep{grudic2000localizing}. Those methods involve splitting and clustering
@@ -186,8 +186,9 @@ training multi-layer architectures and the additional learning time has in the
 past stopped researchers from being able to solve the state-engineering problem
 and focus purely on tackling the decision-making part \citep{melo2008analysis}.
 
-The recent surge of Deep Learning has the effect of shaking up the reinforcement
-learning community to focus again on using powerful general state approximators
+The recent surge of Deep Learning had the major effect of shaking up the
+reinforcement learning community to focus again on making state-of-the-art
+algorithms work with some of those powerful generic function approximators.
 We'll see in Chapter 4 that by employing some learning tricks it is now in fact
 possible to use deep neural networks to approximate a lot of the classic
 reinforcement learning functions (such as for instance the value function
@@ -196,7 +197,7 @@ $V_{\pi}(s)$).
 \section{Computer Games as Learning Environments}
 
 Playing video-games usually involves a wide variety of transferable skills that
-range from reactive planning to reasoning under extreme uncertainty. It's
+range from reactive planning to reasoning under extreme uncertainty. It's also
 reasonable to state that one of the industries that has most benefited from
 artificial intelligence research is in fact the video gaming industry
 \citep{laird2001human}. State-of-the-art AI research is regularly used to create
@@ -225,13 +226,14 @@ in reinforcement learning research and work related to planning. The interface
 is built on an open-source emulator for Atari 2600 ROM images, and is released
 under the GNU GPL license.
 
-In their platform presentation paper, the authors of ALE state that once the
+In their platform presentation paper, the authors of ALE stated that once the
 games available in ALE are defeated, the community should move up the ladder and
-challenge newer and more complex games. In Chapter 4 we in fact discuss work
-that managed to reach human and superhuman performances on most of the games
-available in this system. Some of the motivation behind our work consists in
-looking at what could replace this platform with a more challenging set of
-problems.
+challenge newer and more complex games (such as for instance StarCraft!). In
+Chapter 4 we in fact discuss work that managed to reach human and superhuman
+performances on most of the games available in this system, which ultimately
+provided part of the motivation behind our work. We are essentially working to
+see what would be needed to replace this platform with one providing a more
+challenging set of problems.
 
 \subsection{RTS AI Research}
 
@@ -355,9 +357,10 @@ aspects of the game have been studied:
   \cite{balla2009uct, certicky2013case, kovarsky2005heuristic}. 
 \end{description}
 
-Many more papers are available on the subject, with other subproblems being
-relevant to StarCraft and other Real-Time Strategy games. A broader discussion
-is available at \cite{ontanon2013survey} and \cite{churchill2016heuristic}.
+Many more papers are available on the subject, some of which cover sub-problems
+that we haven't discussed here but that are still of extreme relevance to us and
+other Real-Time Strategy games. A broader discussion is available at
+\cite{ontanon2013survey} and \cite{churchill2016heuristic}.
 
 \subsubsection{RTS AI Competitions}
 

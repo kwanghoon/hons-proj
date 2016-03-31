@@ -2,7 +2,7 @@
 
 Our initial goal was to implement a couple of algorithms as baseline for
 experiments outside of the scope of this work. Ideally, those algorithms would
-have also helped us finding any ``low-hanging fruits'' to properly start
+have also helped us find any ``low-hanging fruits'' to properly start
 tackling the entire game as a whole big machine learning problem. In addition to
 implementing those algorithms, we also designed a few automatic tests to check
 the validity of the game state information in known maps.
@@ -73,7 +73,7 @@ at its center. Figure \ref{fig:guid_task} shows an example of one of those maps.
 \end{figure}
 
 Our final task consisted in an interactive navigation problem. In particular,
-one or more units was spawned in one of 20 maps in which all the allied units
+one or more units were spawned in one of 20 maps in which all the allied units
 were either close to aggressive enemy units or partly surrounded by them.
 The agent would receive a reward of -10 if any of the units was killed, killing
 a unit would account for a reward of 5, and 0 for any other event (or lack
@@ -105,7 +105,7 @@ some explorative policy (as opposed to on-policy reinforcement learning where
 the policy used to gain ``experience'' is the same as the one that is being
 learnt).
 
-In particular, our algorithms works by updating an action-value function $Q(s,
+In particular, our algorithms work by updating an action-value function $Q(s,
 a)$ using an $\epsilon$-greedy policy to gain new samples. Given a learning rate
 $\alpha$ and a discount factor $\gamma$,
 
@@ -137,9 +137,9 @@ algorithms, but obtained significantly degraded policies
 \subsubsection{Task dependent state representation}
 
 Providing a state representation for quickly testing the whole system ended up
-resulting in a far more challenging problem than initially estimated. To be able
-to extensively test the symbolic game state data being sent by the client we
-wanted to obtain a useful state representation without having to use a black-box
+being a far more challenging problem than initially estimated. To be able to
+extensively test the symbolic game state data being sent by the client we wanted
+to obtain a useful state representation without having to use a black-box
 function approximator such as an artificial neural network, as it would have
 made it very hard to do automatic testings. Moreover we wanted to check and
 explore how difficult it would have been to use standard RL techniques on
@@ -179,11 +179,11 @@ StarCraft's large state space.
 
 \end{sflisting}
 
-Listing \ref{ls:sample} shows a sample of the game state data in our
-domain. We can see that it is difficult to represent such a representation in an
-array because the data increases with the number of units. To create a
-representation that we can use in a tabular fashion we must at least manually
-compress the state in some way.
+Listing \ref{ls:sample} shows a sample of the game state data in our domain. We
+can see that it is difficult to encoded such a representation in an array because
+the data increases with the number of units. To create a representation that we
+can use in a tabular fashion we must at least manually compress the state in
+some way.
 
 \begin{figure}[h]
     \centering
@@ -247,7 +247,7 @@ would obtain a good enough (but almost certainly suboptimal) policy in any case.
 \subsection{Deep Q-learning}
 
 The work described in this section is partially motivated by recent advances in
-work that uses non-linear function approximators for reinforcement learning. The
+research that uses non-linear function approximators for reinforcement learning. The
 \emph{Deep Q-Network} (DQN) algorithm \citep{mnih2013playing, mnih2015human} has
 become one of the most popular variants of deep reinforcement learning, a
 ``new'' branch of reinforcement learning research that uses multi-layer ``deep''
@@ -280,7 +280,7 @@ Q-learning update (Equation \ref{eq:ql}) as the loss function.
 
 % TODO maybe put algorithm in here
 
-Similarly to \cite{mnih2013playing}, our algorithms records all the tuples
+Similarly to \cite{mnih2013playing}, our algorithms record all the tuples
 containing the experience of the agent, keeps track of the newest ones using a
 circular buffer, and samples from the buffer whenever the update step is called.
 This functionality is called \textbf{Experience Replay} and removes the
@@ -319,7 +319,7 @@ optimise the execution of each unit action by parallelising the decision process
 using the duration of the commanded primitive as a time buffer.
 
 Q-learning was the easy to adapt, as the only required change to the algorithm
-was to generate the state with respective to selected units and to parametrise
+was to generate the state with respect to selected units and to parametrise
 the action array by unit (Figure \ref{fig:parallelq}). Deep Q-learning was
 harder to adapt because we had to take into account the visual window state. In
 particular, to minimise the pixel variance we had to order the client to
@@ -334,7 +334,7 @@ of the screen (Figure \ref{fig:paralleldqn}).
 \end{figure}
 
 This had the additional unexpected consequence of further randomising our
-experiments, therefore allowing us to explore the state space much more quickly.
+experiments, therefore allowing us to explore the state space more quickly.
 Unfortunately it also meant that the agent would not have any information about
 the effect of its previous units' action choices over its future observations,
 making the behaviour of allied units somewhat correlated with the agent policy.
