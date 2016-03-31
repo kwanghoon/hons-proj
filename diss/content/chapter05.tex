@@ -25,10 +25,10 @@ triggers and 100 units (split into 50 allied and 50 enemy units).
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{placeholder}
-    \caption{CPU and RAM usage of BWLE with respect to the Windows client and
-      the Linux server. All the usage and was synchronously recorded every 100
-      steps.}
+    \includegraphics[width=\textwidth]{ch5/cpu_test_re}
+    \caption{CPU usage of BWLE with respect to the Windows client and the Linux
+      server. All the usage and was synchronously recorded every 10 steps. The
+      memory usage closely follows the CPU usage.}
     \label{fig:fst_usage}
 \end{figure}
 
@@ -57,7 +57,7 @@ iterations by playing 10 episodes, recording mean and standard deviation.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{placeholder}
+    \includegraphics[width=\textwidth]{ch5/nav_task_re}
     \caption{Results of DQN and Q-learning on the simpler navigation task.}
     \label{fig:nav_task_results}
 \end{figure}
@@ -85,8 +85,8 @@ the map's walkable paths average width.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{placeholder}
-    \caption{Results of DQN and Q-learning on the simpler navigation task.}
+    \includegraphics[width=\textwidth]{ch5/guid_task_re}
+    \caption{Results of DQN and Q-learning on the guided navigation task.}
     \label{fig:guid_task_results}
 \end{figure}
 
@@ -113,7 +113,7 @@ episode gradually increases, which means that learning is happening.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{placeholder}
+    \includegraphics[width=\textwidth]{ch5/surv_task_re}
     \caption{Results of DQN and Q-learning on the harder Survival task.}
     \label{fig:surv_task_results}
 \end{figure}
@@ -125,13 +125,6 @@ between the policy learnt by the mono-unit agent and the one learnt by the
 multi-unit version in the case when identical states are presented (for instance
 0 allied units), but this is probably due to approximation noise in the
 value network.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{placeholder}
-    \caption{Action distribution over different states.}
-    \label{fig:dif_pol}
-\end{figure}
 
 % simple tests
 %  message checks

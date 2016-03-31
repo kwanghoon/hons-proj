@@ -23,7 +23,7 @@ reinforcement learning agents would perform on a reduced StarCraft domain.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{placeholder}
+    \includegraphics[width=0.9\textwidth]{ch4/nav_task}
     \caption{Example of map instance of the navigation task.}
     \label{fig:nav_task}
 \end{figure}
@@ -35,8 +35,8 @@ The first sub-problem consisted in checking whether we could learn simple
 policies based on location goals. We constructed 20 small maps in which a unit
 was spawned on the opposite edge of map from the goal and had to reach the map
 in the smallest amount of time. The agent received a reward of -1 for going
-further away from the goal and +1 for getting closer to the goal. Reaching the
-goal would give 100 of reward and would terminate the trial. You can see some of
+further away from the goal and 0 for getting closer to the goal. Reaching the
+goal would give 10 of reward and would terminate the trial. You can see some of
 those maps in Figure \ref{fig:nav_task}. We disabled \texttt{moveScreen*}
 actions for both agents as we made the map small enough for all the relevant
 information to be available. The Q-learning agent had access to the controlled
@@ -48,7 +48,7 @@ new grid.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{placeholder}
+    \includegraphics[width=0.9\textwidth]{ch4/guid_task}
     \caption{Example of map instance of the guided navigation task.}
     \label{fig:guid_task}
 \end{figure}
@@ -67,7 +67,7 @@ at its center. Figure \ref{fig:guid_task} shows an example of one of those maps.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{placeholder}
+    \includegraphics[width=0.5\textwidth]{ch4/surv_task}
     \caption{Example of map instance of the survival task.}
     \label{fig:surv_task}
 \end{figure}
@@ -81,6 +81,7 @@ thereof). Because of the multi-dimensionality of the space, it became possible
 to receive different rewards at each time, so rewards received at some step $t$
 were summed together before being sent to the agent. Figure \ref{fig:surv_task}
 shows an example of one of those maps.
+
 
 \section{RL Algorithms}
 
@@ -121,7 +122,7 @@ The agent policy in the evaluation phase then becomes
 \label{eq:ql2}
 \end{equation}
 
-It has been proved that this policy converges to the optimal policy $\pi*$ given
+It has been proved that this policy converges to the optimal policy $\pi^*$ given
 enough samples from all state-action pairs
 \citep{Sutton:1998:IRL:551283}. % TODO how?
 
@@ -129,9 +130,9 @@ The Q function can be represented as a table of values (a simple array) or can
 be approximated using a function approximator, however a lot of literature has
 highlighted difficulties in making Q-learning (and other model-free RL
 algorithms) converge when the action-value function is approximated
-\citep{Baird_1997}. In some cases researchers managed to converge the
+\citep{sutton1999policy}. In some cases researchers managed to converge the
 algorithms, but obtained significantly degraded policies
-\citep{bertsekas_1996_tetris, waver_and_baxter_1999, boyan_and_moore_1995}.
+\citep{bertsekas2011approximate, baxter1999direct}.
 
 \subsubsection{Task dependent state representation}
 
@@ -144,14 +145,41 @@ made it very hard to do automatic testings. Moreover we wanted to check and
 explore how difficult it would have been to use standard RL techniques on
 StarCraft's large state space.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.9\textwidth]{placeholder}
-    \caption{Example of a state in our test domain.}
-    \label{fig:sample_state}
-\end{figure}
+\begin{sflisting}[caption=Example of a game state Lua table recorded by the
+  agent, label=ls:sample] [standard]
+{
+  has_image = true,
+  is_terminal = false,
+  last_reward = -1,
+  timestamp = 1459390526287,
+  units = {
+    [0] = {
+      hp = 4,
+      id = 0,
+      is_allied = true,
+      pos = { 544, 1602 },
+      type = 1
+    },
+    [3] = {
+      hp = 40,
+      id = 3,
+      is_allied = false,
+      pos = { 666, 1733 },
+      type = 1
+    },
+    [5] = {
+      hp = 4,
+      id = 5,
+      is_allied = false,
+      pos = { 612, 1722 },
+      type = 1
+    }
+  }
+}
 
-Figure \ref{fig:sample_state} shows a sample of the game state data in our
+\end{sflisting}
+
+Listing \ref{ls:sample} shows a sample of the game state data in our
 domain. We can see that it is difficult to represent such a representation in an
 array because the data increases with the number of units. To create a
 representation that we can use in a tabular fashion we must at least manually
@@ -295,7 +323,7 @@ the action array by unit (Figure \ref{fig:parallelq}). Deep Q-learning was
 harder to adapt because we had to take into account the visual window state. In
 particular, to minimise the pixel variance we had to order the client to
 position the window viewpoint on top of the unit to always keep it at the center
-of the screen (Figure \ref{fig:paralleldq}).
+of the screen (Figure \ref{fig:paralleldqn}).
 
 \begin{figure}[h]
     \centering
